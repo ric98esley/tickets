@@ -12,6 +12,7 @@
   "dependencies": {
     "@nuxt/ui": "^2.17.0",
     "@pinia/nuxt": "^0.5.1",
+    "joi": "^17.13.1",
     "nuxt": "^3.12.1",
     "pinia": "^2.1.7",
     "pocketbase": "^0.21.3",
