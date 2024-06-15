@@ -3,7 +3,6 @@ import Joi from 'joi'
 import type { FormSubmitEvent } from '#ui/types'
 
 const { $pb } = useNuxtApp()
-const authStore = useAuthStore()
 
 definePageMeta({
   layout: 'auth'
@@ -27,10 +26,6 @@ async function onSubmit(event: FormSubmitEvent<any>) {
       event.data.email,
       event.data.password,
     );
-  
-    authStore.setAuthState(userData.token, userData.model)
-
-    console.log(authStore.token)
   } catch (error) {
     console.error(error)
   }
