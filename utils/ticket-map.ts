@@ -1,6 +1,6 @@
 import type { TicketResponse, Ticket} from "~/types";
 
-export const TicketMapper = (data: TicketResponse ) : Ticket => {
+export const ticketEntityMapper = (data: TicketResponse ) : Ticket => {
   return {
     id: data.id,
     customerName: data.customer_name,

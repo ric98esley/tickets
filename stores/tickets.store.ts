@@ -1,10 +1,23 @@
 import type { Ticket } from "~/types";
 
+const ticketsService = useTickets()
+
+interface TicketsState {
+  tickets: Ticket[]
+  page: number
+  total: number
+}
+
 export const useTicketsStore = defineStore('tickets', {
-  state: (): { tickets: Ticket[] } => ({ tickets: [] }),
+  state: (): TicketsState => ({ tickets: [], page: 1, total: 0 }),
   actions: {
     addTicket(ticket: Ticket) {
-      this.tickets.push(ticket)
+      if (!this.tickets.find(t => t.id === ticket.id)) {
+        this.tickets.push(ticket)
+      }
+      else {
+        this.tickets = this.tickets.map(t => t.id === ticket.id ? ticket : t)
+      }
     },
     removeTicket(ticket: Ticket) {
       this.tickets.splice(this.tickets.indexOf(ticket), 1)
@@ -17,5 +30,9 @@ export const useTicketsStore = defineStore('tickets', {
     getTicketsByStatus: (state) => (status: string): Ticket[] => {
       return state.tickets.filter(ticket => ticket.status === status)
     },
+    fetchTickets: (state) => async () => {
+      const tickets = await ticketsService.find()
+      state.tickets = tickets
+    }
   }
 })
