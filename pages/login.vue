@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Joi from 'joi'
 import type { FormSubmitEvent } from '#ui/types'
+const router = useRouter()
 
 const { $pb } = useNuxtApp()
 
@@ -22,10 +23,11 @@ const state = reactive({
 
 async function onSubmit(event: FormSubmitEvent<any>) {
   try {
-    const userData = await $pb.collection('users').authWithPassword(
+    await $pb.collection('users').authWithPassword(
       event.data.email,
       event.data.password,
     );
+    router.push('/')
   } catch (error) {
     console.error(error)
   }

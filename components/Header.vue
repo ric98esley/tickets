@@ -1,9 +1,21 @@
 <script setup lang="ts">
-const route = useRoute()
+const userStore = useUserStore()
+const { $pb } = useNuxtApp()
+const router = useRouter()
+
 
 const colorMode = useColorMode()
 
+const username = ref(userStore.user?.name)
+const userAvatar = ref(userStore.user?.avatar)
+
 const isOpen = ref(false)
+
+const logout = async () => {
+  await $pb.authStore.clear()
+  await userStore.logout()
+  await router.push('/login')
+}
 
 const isDark = computed({
   get() {
@@ -15,9 +27,9 @@ const isDark = computed({
 })
 
 const links = reactive([{
-  label: 'Profile',
+  label: username.value ?? 'Usuario',
   avatar: {
-    src: 'https://avatars.githubusercontent.com/u/739984?v=4'
+    src: userAvatar.value ?? 'https://i.pravatar.cc/150?img=68',
   },
   badge: 100,
   click: () => isOpen.value = false
@@ -38,15 +50,40 @@ const links = reactive([{
   click: () => isOpen.value = false
 }])
 
+const items = [
+  [{
+    label: 'Perfil',
+    avatar: {
+      src: userAvatar.value ?? 'https://i.pravatar.cc/150?img=68',
+    }
+  }], [{
+    label: 'Mis tickets',
+    icon: 'i-heroicons-pencil-square-20-solid',
+    click: () => {
+      console.log('Edit')
+    }
+  }], [{
+    label: 'Salir',
+    icon: 'i-heroicons-arrow-left-start-on-rectangle-16-solid',
+    click: logout,
+  }]
+]
+
 </script>
 
 <template>
   <header class="flex-col min-h-12">
     <div class="flex justify-between border-b border-gray-200 dark:border-gray-800 min-h-12">
-      <UButton icon="i-heroicons-bars-3-16-solid" class="sm:hidden" size="sm" color="primary" square variant="link" @click="isOpen = true"/>
+      <UButton icon="i-heroicons-bars-3-16-solid" class="sm:hidden pl-4" size="sm" color="primary" square variant="link"
+        @click="isOpen = true" />
       <UHorizontalNavigation :links="links" class="hidden md:flex" />
-      <UButton :icon="isDark ? 'i-heroicons-moon-20-solid' : 'i-heroicons-sun-20-solid'" color="gray" variant="ghost"
+      <div class="flex content-center pr-4">
+        <UButton :icon="isDark ? 'i-heroicons-moon-20-solid' : 'i-heroicons-sun-20-solid'" color="gray" variant="ghost"
         aria-label="Theme" @click="isDark = !isDark" />
+        <UDropdown :items="items" :popper="{ placement: 'bottom-start' }">
+          <UButton size="md" square variant="ghost" trailing-icon="i-heroicons-cog-6-tooth" />
+        </UDropdown>
+      </div>
     </div>
     <USlideover v-model="isOpen" side="left">
       <UCard class="flex flex-col flex-1"
