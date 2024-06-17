@@ -1,0 +1,1 @@
+export { TicketResponse, Ticket} from './tickets.d.ts'
