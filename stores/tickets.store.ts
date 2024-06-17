@@ -1,6 +1,6 @@
 import type { Ticket } from "~/types";
 
-export const useUserStore = defineStore('tickets', {
+export const useTicketsStore = defineStore('tickets', {
   state: (): { tickets: Ticket[] } => ({ tickets: [] }),
   actions: {
     addTicket(ticket: Ticket) {
