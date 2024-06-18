@@ -1,16 +1,17 @@
 <script setup lang="ts">
+
 const ticketsStore = useTicketsStore()
+const rows = reactive(ticketsStore.tickets)
 
-const tickets = ticketsStore.tickets
 
-onMounted(() => {
-  ticketsStore.fetchTickets()
+onMounted(async () => {
+  const tickets = await ticketsStore.fetchTickets()
+  ticketsStore.addTickets(tickets)
 })
-
 </script>
 
 <template>
   <UContainer>
-    <UTable :rows="tickets" />
+    <UTable :rows="rows" />
   </UContainer>
 </template>

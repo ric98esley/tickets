@@ -1,38 +1,46 @@
 import type { Ticket } from "~/types";
 
-const ticketsService = useTickets()
-
 interface TicketsState {
   tickets: Ticket[]
   page: number
   total: number
 }
 
-export const useTicketsStore = defineStore('tickets', {
-  state: (): TicketsState => ({ tickets: [], page: 1, total: 0 }),
-  actions: {
-    addTicket(ticket: Ticket) {
-      if (!this.tickets.find(t => t.id === ticket.id)) {
-        this.tickets.push(ticket)
-      }
-      else {
-        this.tickets = this.tickets.map(t => t.id === ticket.id ? ticket : t)
-      }
-    },
-    removeTicket(ticket: Ticket) {
-      this.tickets.splice(this.tickets.indexOf(ticket), 1)
-    },
-  },
-  getters: {
-    getTicketById: (state) => (id: string): Ticket | undefined => {
-      return state.tickets.find(ticket => ticket.id === id)
-    },
-    getTicketsByStatus: (state) => (status: string): Ticket[] => {
-      return state.tickets.filter(ticket => ticket.status === status)
-    },
-    fetchTickets: (state) => async () => {
-      const tickets = await ticketsService.find()
-      state.tickets = tickets
+export const useTicketsStore = defineStore('List tickets', () => {
+  const tickets = reactive<Ticket[]>([])
+  const page = ref(1)
+  const total = ref(0)
+
+  const getTicketsByStatus = computed((status) => {
+    return tickets.filter(ticket => ticket.status === status)
+  })
+
+  function addTickets(rows: Ticket[]) {
+    for (const row of rows) {
+      addTicket(row)
     }
+  };
+  function addTicket(ticket: Ticket) {
+    if (!tickets.find(t => t.id === ticket.id)) {
+      tickets.push(ticket)
+    }
+    else {
+      tickets.map(t => t.id === ticket.id ? ticket : t)
+    }
+  }
+  function removeTicket(ticket: Ticket) {
+    tickets.splice(tickets.indexOf(ticket), 1)
+  }
+
+  async function fetchTickets() {
+    return await useFindTickets({})
+  }
+  return {
+    tickets,
+    getTicketsByStatus,
+    fetchTickets,
+    addTicket,
+    addTickets,
+    removeTicket,
   }
 })
