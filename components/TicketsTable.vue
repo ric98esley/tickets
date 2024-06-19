@@ -24,10 +24,10 @@ const columns = [{
   key: 'customerName',
   label: 'Nombre Cliente'
 }, {
-  key: 'status',
+  key: 'status.name',
   label: 'Estatus'
 }, {
-  key: 'createdAt',
+  key: 'timeSince',
   label: 'Creado el'
 }]
 
@@ -43,7 +43,6 @@ const page = computed({
 <template>
   <UContainer >
     <UTable :rows="props.data" :columns="columns">
-      
     </UTable>
     <UPagination v-model="page" :total="props.total" :page-count="props.limit" />
   </UContainer>

@@ -36,3 +36,12 @@ export async function useFindTickets(data: FindTickets): Promise<Ticket[]> {
     return []
   }
 }
+
+export async function subscribeTickets(callback: (ticket: Ticket, action: string) => void) {
+  const { $pb } = useNuxtApp()
+  const unsubscribe = $pb.collection<TicketResponse>('tickets').subscribe('*', (e) => {
+    callback(ticketEntityMapper(e.record), e.action)
+  }
+  )
+  return unsubscribe
+}
