@@ -1,10 +1,14 @@
-import type { TicketResponse, Ticket} from "~/types";
+import type { TicketResponse, Ticket } from "~/types";
 import { timeSince } from "./date-format";
 
-export const ticketEntityMapper = (data: TicketResponse ) : Ticket => {
-  let createdBy = userMapper(data.expand.created_by)
-  let assignedTo = userMapper(data.expand.assigned_to)
-  let status = statusMapper(data.expand.status)
+export const ticketEntityMapper = (data: TicketResponse): Ticket => {
+  let createdBy = undefined
+  let assignedTo = undefined
+  let status = undefined
+
+  if (data.expand.created_by) createdBy = userMapper(data.expand.created_by)
+  if (data.expand.assigned_to) assignedTo = userMapper(data.expand.assigned_to)
+  if (data.expand.status) status = statusMapper(data.expand.status)
 
   return {
     id: data.id,

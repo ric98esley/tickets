@@ -29,9 +29,9 @@ export interface Ticket {
   senderId:       number;
   conversationId: number;
   phone:          string;
-  createdBy:      User;
-  assignedTo:     User;
-  status:         Status;
+  createdBy?:      User;
+  assignedTo?:     User;
+  status?:         Status;
   agentCode:      string;
   isClosed:       boolean;
   timeSince?:      string;
