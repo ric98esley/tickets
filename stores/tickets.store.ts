@@ -37,6 +37,8 @@ export const useTicketsStore = defineStore('List tickets', () => {
   }
   return {
     tickets,
+    total,
+    page,
     getTicketsByStatus,
     fetchTickets,
     addTicket,

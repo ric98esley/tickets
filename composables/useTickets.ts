@@ -23,7 +23,7 @@ export async function useFindTickets(data: FindTickets): Promise<Ticket[]> {
   try {
     const { $pb } = useNuxtApp()
     const resultList = await $pb.collection<TicketResponse>('tickets').getList(1, 0, {
-
+      expand: 'created_by,assigned_to,status',
     })
 
     const tickets = resultList.items.map((data) => {
