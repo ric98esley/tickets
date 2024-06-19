@@ -34,6 +34,7 @@ export interface Ticket {
   status:         Status;
   agentCode:      string;
   isClosed:       boolean;
+  timeSince?:      string;
   closedAt:       Date;
   createdAt:      Date;
   updatedAt:      Date;

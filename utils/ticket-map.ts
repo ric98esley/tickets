@@ -1,4 +1,5 @@
 import type { TicketResponse, Ticket} from "~/types";
+import { timeSince } from "./date-format";
 
 export const ticketEntityMapper = (data: TicketResponse ) : Ticket => {
   let createdBy = userMapper(data.expand.created_by)
@@ -17,6 +18,7 @@ export const ticketEntityMapper = (data: TicketResponse ) : Ticket => {
     senderId: data.sender_id,
     isClosed: data.is_closed,
     closedAt: data.closed_at,
+    timeSince: timeSince(data.created),
     createdAt: data.created,
     updatedAt: data.updated
   }
