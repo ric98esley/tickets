@@ -1,3 +1,11 @@
+import type { Status, StatusResponse } from "./status";
+import type { User, UserResponse } from "./user";
+
+interface Expand {
+  assigned_to: UserResponse;
+  created_by:  UserResponse;
+  status:      StatusResponse;
+}
 export interface TicketResponse {
   id:              string;
   created:         Date;
@@ -12,18 +20,19 @@ export interface TicketResponse {
   sender_id:       number;
   is_closed:       boolean;
   closed_at:       Date;
+  expand:          Expand;
 }
 
 export interface Ticket {
   id:             string;
   customerName:   string;
-  phone:          string;
-  createdBy:      string;
-  assignedTo:     string;
-  status:         string;
-  agentCode:      string;
-  conversationId: number;
   senderId:       number;
+  conversationId: number;
+  phone:          string;
+  createdBy:      User;
+  assignedTo:     User;
+  status:         Status;
+  agentCode:      string;
   isClosed:       boolean;
   closedAt:       Date;
   createdAt:      Date;
