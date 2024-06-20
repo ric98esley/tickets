@@ -15,5 +15,5 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <TicketsTable :data="ticketsStore.tickets" />
+  <TicketGrid :data="ticketsStore.tickets"/>
 </template>

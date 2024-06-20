@@ -1,10 +1,5 @@
 import type { Ticket } from "~/types";
 
-interface TicketsState {
-  tickets: Ticket[]
-  page: number
-  total: number
-}
 
 export const useTicketsStore = defineStore('List tickets', () => {
   const tickets = reactive<Ticket[]>([])
