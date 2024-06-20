@@ -24,6 +24,7 @@ export async function useFindTickets(data: FindTickets): Promise<Ticket[]> {
     const { $pb } = useNuxtApp()
     const resultList = await $pb.collection<TicketResponse>('tickets').getList(1, 0, {
       expand: 'created_by,assigned_to,status',
+      sort: 'created',
     })
 
     const tickets = resultList.items.map((data) => {
@@ -39,9 +40,11 @@ export async function useFindTickets(data: FindTickets): Promise<Ticket[]> {
 
 export async function subscribeTickets(callback: (ticket: Ticket, action: string) => void) {
   const { $pb } = useNuxtApp()
-  const unsubscribe = $pb.collection<TicketResponse>('tickets').subscribe('*', (e) => {
+  $pb.collection<TicketResponse>('tickets').subscribe('*', (e) => {
     callback(ticketEntityMapper(e.record), e.action)
-  }
+  },
+    {
+      expand: 'created_by,assigned_to,status',
+    }
   )
-  return unsubscribe
 }

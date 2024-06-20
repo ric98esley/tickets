@@ -22,14 +22,32 @@ export const useTicketsStore = defineStore('List tickets', () => {
   };
   function addTicket(ticket: Ticket) {
     if (!tickets.find(t => t.id === ticket.id)) {
-      tickets.push(ticket)
+      tickets.unshift(ticket)
     }
     else {
-      tickets.map(t => t.id === ticket.id ? ticket : t)
+      const index = tickets.findIndex(t => t.id === ticket.id)
+      if (index !== -1) {
+        tickets[index] = ticket
+      }
     }
   }
   function removeTicket(ticket: Ticket) {
-    tickets.splice(tickets.indexOf(ticket), 1)
+    const index = tickets.findIndex(t => t.id === ticket.id)
+    if (index !== -1) {
+      tickets.splice(index, 1)
+    }
+  }
+
+  function realtimeTicketHandlers() {
+    subscribeTickets((ticket, action) => {
+      if (action === 'create' || action === 'update') {
+        console.log('add ticket', ticket)
+        addTicket(ticket)
+      }
+      else if (action === 'delete') {
+        removeTicket(ticket)
+      }
+    })
   }
 
   async function fetchTickets() {
@@ -41,6 +59,7 @@ export const useTicketsStore = defineStore('List tickets', () => {
     page,
     getTicketsByStatus,
     fetchTickets,
+    realtimeTicketHandlers,
     addTicket,
     addTickets,
     removeTicket,
