@@ -3,38 +3,32 @@ const statusStore = useStatusStore()
 const route = useRoute()
 const router = useRouter()
 
-const filters = reactive(route.query)
+const filters = reactive({
+  id: route.query.id || undefined,
+  name: route.query.name || undefined,
+  color: route.query.color || undefined,
+  limit: Number(route.query.limit) || 10,
+  page: Number(route.query.page) || 1
+})
 
-watch(filters, async (query) => {
+watch(filters, async (data) => {
+  const query = { ...data }
+
   router.push({
     path: '/status',
-    query: {
-      id: query.id || undefined,
-      name: query.name || undefined,
-      color: query.color || undefined
-    }
+    query
   })
-  statusStore.getStatus(query)
-}, { deep: true })
-
+  statusStore.getStatus(data)
+})
 
 onMounted(() => {
-  if (route.query.page) {
-    statusStore.page = Number(route.query.page)
-  }
-
-  if (route.query.limit) {
-    statusStore.limit = Number(route.query.limit)
-  }
-
-  statusStore.getStatus(route.query)
+  statusStore.getStatus(filters)
 })
 </script>
 
 <template>
   <UContainer>
     Status del Sistema
-    <StatusTable :data="statusStore.status" :total="statusStore.totalPages" v-model:filters="filters"
-      v-model:limit="statusStore.limit" v-model:page="statusStore.page" />
+    <StatusTable :data="statusStore.status" :total="statusStore.totalPages" v-model:filters="filters" />
   </UContainer>
 </template>

@@ -7,22 +7,16 @@ const props = defineProps({
     default: () => ([]),
   },
   filters: {
-    type: Object as PropType<StatusFilters>,
+    type: Object as PropType<StatusFind>,
     default: () => ({
       id: '',
       name: '',
-      color: ''
+      color: '',
+      limit: 10,
+      page: 1,
     }),
   },
-  page: {
-    type: [Number, String],
-    default: 1,
-  },
   total: {
-    type: [Number, String],
-    default: 0,
-  },
-  limit: {
     type: [Number, String],
     default: 0,
   },
@@ -40,10 +34,7 @@ const columns = [{
   label: 'Color'
 }]
 
-const emit = defineEmits(['update:page', 'update:limit', 'update:filters'])
-
-
-const limit = ref('10')
+const emit = defineEmits(['update:filters'])
 
 const filters = computed({
   get: () => props.filters,
@@ -65,6 +56,6 @@ const filters = computed({
         <UInput v-model="filters.color" placeholder="Color" />
       </template>
     </UTable>
-    <Pagination :total="props.total" />
-  </div>
+    <Pagination :total="props.total" v-model:limit="filters.limit" v-model:page="filters.page"/>
+  </div>  
 </template>

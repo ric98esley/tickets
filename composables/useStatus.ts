@@ -27,7 +27,6 @@ export async function useFindStatus(data: StatusFind): Promise<{ total: number, 
       })
     }
   } catch (error) {
-    console.error(error)
     return {
       total: 0,
       rows: []
