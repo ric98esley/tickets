@@ -1,5 +1,5 @@
 import type { Status, StatusResponse } from "~/types";
-import type { StatusCreate, StatusFind } from "~/types/status";
+import type { StatusCreate, StatusFind, StatusUpdate } from "~/types/status";
 
 function constructQuery(initial: string, add: string): string {
   return initial ? `${initial}&&${add}` : add
@@ -37,7 +37,7 @@ export async function useFindStatus(data: StatusFind): Promise<{ total: number, 
 export async function useSaveStatus(data: StatusCreate): Promise<Status | undefined> {
   try {
     const { $pb } = useNuxtApp()
-    
+
     const result = await $pb.collection<StatusResponse>('status').create(data)
     useToast().add({
       title: 'Estado guardado',
@@ -54,7 +54,7 @@ export async function useSaveStatus(data: StatusCreate): Promise<Status | undefi
   }
 }
 
-export async function useUpdateStatus(data: Status): Promise<Status | undefined> {
+export async function useUpdateStatus(data: StatusUpdate): Promise<Status | undefined> {
   const toast = useToast()
   try {
     const { $pb } = useNuxtApp()

@@ -22,6 +22,7 @@ export interface StatusCreate {
 }
 
 export interface StatusUpdate {
+  id: string;
   name?: string;
   color?: string;
 }

@@ -1,6 +1,7 @@
 <script setup lang="ts">
-
 const route = useRoute()
+const statusStore = useStatusStore()
+
 const props = defineProps({
   data: {
     type: Array as PropType<Status[]>,
@@ -38,21 +39,27 @@ const columns = [{
   label: 'Acciones'
 }]
 
-const emit = defineEmits(['update:filters'])
+const emit = defineEmits(['update:filters', 'refresh'])
 
 const filters = computed({
   get: () => props.filters,
   set: (value) => emit('update:filters', value)
 })
 
-const items = (row) => [
+const deleteStatus = async (row: Status) => {
+  await statusStore.deleteStatus(row)
+  emit('refresh')
+}
+
+const items = (row: Status) => [
   [{
     label: 'Editar',
     icon: 'i-heroicons-pencil-square-20-solid',
     click: () => console.log('Edit', row.id)
   },], [{
     label: 'Borrar',
-    icon: 'i-heroicons-trash-20-solid'
+    icon: 'i-heroicons-trash-20-solid',
+    click: () => statusStore.deleteStatus(row)
   }]
 ]
 

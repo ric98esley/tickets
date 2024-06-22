@@ -1,4 +1,4 @@
-import type { Status, StatusCreate, StatusFind } from "~/types"
+import type { Status, StatusCreate, StatusFind, StatusUpdate } from "~/types"
 
 export const useStatusStore = defineStore('List Status', () => {
   const status = reactive<Status[]>([])
@@ -24,10 +24,22 @@ export const useStatusStore = defineStore('List Status', () => {
     const result = await useSaveStatus(data)
     return result
   }
+
+  async function updateStatus(data: StatusUpdate) {
+    const result = await useUpdateStatus(data)
+    return result
+  }
+
+  async function deleteStatus(data: Status) {
+    const result = await useDeleteStatus(data.id)
+    return result
+  }
   return {
     status,
     totalPages,
     getStatus,
-    createStatus
+    createStatus,
+    updateStatus,
+    deleteStatus
   }
 })

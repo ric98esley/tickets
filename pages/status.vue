@@ -51,7 +51,11 @@ onMounted(() => {
           <UButton @click="modals.create = true" class="ml-auto">Crear</UButton>
         </div>
       </template>
-      <StatusTable :data="statusStore.status" :total="statusStore.totalPages" v-model:filters="filters" />
+      <StatusTable
+        :data="statusStore.status"
+        :total="statusStore.totalPages"
+        v-model:filters="filters"
+        @refresh="() => statusStore.getStatus(filters)" />
     </UCard>
     <UModal v-model="modals.create">
       <UCard class="p-4">
