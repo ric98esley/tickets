@@ -35,13 +35,13 @@ const links = reactive([{
   click: () => isOpen.value = false
 }, {
   label: 'Nuevos',
-  icon: 'i-heroicons-home',
+  icon: 'i-heroicons-ticket-solid',
   to: '/',
   click: () => isOpen.value = false
 }, {
-  label: 'Horizontal Navigation',
-  icon: 'i-heroicons-chart-bar',
-  to: `/`,
+  label: 'Status',
+  icon: 'i-heroicons-queue-list-16-solid',
+  to: `/status`,
   click: () => isOpen.value = false
 }, {
   label: 'Command Palette',
