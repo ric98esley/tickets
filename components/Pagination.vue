@@ -35,7 +35,14 @@ const limits = [2, 10, 20, 50, 100]
 
 <template>
   <div class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700">
+    <div class="mx-4">
+      <span class="text-sm leading-5">
+        Total
+        <span class="font-medium">{{ total }}</span>
+        resultados
+      </span>
+    </div>
     <USelect v-model="limit" :options="limits" />
-    <UPagination v-model="page" :total="props.total" />
+    <UPagination v-model="page" :total="props.total" :page-count="limit" />
   </div>
 </template>

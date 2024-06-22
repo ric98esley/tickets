@@ -19,7 +19,7 @@ const props = defineProps(
           <span class="text-lg md:text-2xl lg:text-3xl font-semibold">{{ props.data?.agentCode }}</span>
         </div>
         <UBadge class="flex items-center text-center p-2 overflow-hidden"
-          :style="{ ['background-color']: '#' + props.data.status?.color }">
+          :style="{ ['background-color']: props.data.status?.color }">
           {{ props.data.status?.name }}
         </UBadge>
       </div>

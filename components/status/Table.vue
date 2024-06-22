@@ -47,15 +47,21 @@ const filters = computed({
   <div>
     <UTable :rows="data" :columns="columns">
       <template #id-header>
-        <UInput v-model="filters.id" placeholder="ID" />
+        <UInput v-model="filters.id" placeholder="ID" class="w-36" />
       </template>
       <template #name-header>
         <UInput v-model="filters.name" placeholder="Nombre" />
       </template>
       <template #color-header>
-        <UInput v-model="filters.color" placeholder="Color" />
+        <UInput v-model="filters.color" placeholder="Color" class="w-24" />
+      </template>
+      <template #color-data="{ row }">
+        <UBadge size="sm"
+          :style="{ ['background-color']:  row.color }">
+          {{ row.color }}
+        </UBadge>
       </template>
     </UTable>
-    <Pagination :total="props.total" v-model:limit="filters.limit" v-model:page="filters.page"/>
-  </div>  
+    <Pagination :total="props.total" v-model:limit="filters.limit" v-model:page="filters.page" />
+  </div>
 </template>

@@ -11,6 +11,19 @@ const filters = reactive({
   page: Number(route.query.page) || 1
 })
 
+const modals = reactive({
+  create: false
+})
+
+const createStatus = async (data: StatusCreate) => {
+  await statusStore.createStatus({
+    name: data.name,
+    color: data.color.toUpperCase()
+  })
+  statusStore.getStatus(filters)
+  modals.create = false
+}
+
 watch(filters, async (data) => {
   const query = { ...data }
 
@@ -28,7 +41,22 @@ onMounted(() => {
 
 <template>
   <UContainer>
-    Status del Sistema
-    <StatusTable :data="statusStore.status" :total="statusStore.totalPages" v-model:filters="filters" />
+    <UCard>
+      <template #header>
+        <div class="flex">
+          Status del Sistema
+          <UButton @click="modals.create = true" class="ml-auto">Crear</UButton>
+        </div>
+      </template>
+      <StatusTable :data="statusStore.status" :total="statusStore.totalPages" v-model:filters="filters" />
+    </UCard>
+    <UModal v-model="modals.create">
+      <UCard class="p-4">
+        <template #header>
+          Guardar Status
+        </template>
+        <StatusForm @submit="createStatus" />
+      </UCard>
+    </UModal>
   </UContainer>
 </template>
