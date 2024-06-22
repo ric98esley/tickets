@@ -32,6 +32,10 @@ const columns = [{
 }, {
   key: 'color',
   label: 'Color'
+},
+{
+  key: 'actions',
+  label: 'Acciones'
 }]
 
 const emit = defineEmits(['update:filters'])
@@ -40,6 +44,17 @@ const filters = computed({
   get: () => props.filters,
   set: (value) => emit('update:filters', value)
 })
+
+const items = (row) => [
+  [{
+    label: 'Editar',
+    icon: 'i-heroicons-pencil-square-20-solid',
+    click: () => console.log('Edit', row.id)
+  },], [{
+    label: 'Borrar',
+    icon: 'i-heroicons-trash-20-solid'
+  }]
+]
 
 </script>
 
@@ -53,13 +68,17 @@ const filters = computed({
         <UInput v-model="filters.name" placeholder="Nombre" />
       </template>
       <template #color-header>
-        <UInput v-model="filters.color" placeholder="Color" class="w-24" />
+        <UInput v-model="filters.color" placeholder="Color" />
       </template>
       <template #color-data="{ row }">
-        <UBadge size="sm"
-          :style="{ ['background-color']:  row.color }">
+        <UBadge size="sm" :style="{ ['background-color']: row.color }">
           {{ row.color }}
         </UBadge>
+      </template>
+      <template #actions-data="{ row }">
+        <UDropdown :items="items(row)">
+          <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid" />
+        </UDropdown>
       </template>
     </UTable>
     <Pagination :total="props.total" v-model:limit="filters.limit" v-model:page="filters.page" />

@@ -3,6 +3,8 @@ const statusStore = useStatusStore()
 const route = useRoute()
 const router = useRouter()
 
+const toast = useToast()
+
 const filters = reactive({
   id: route.query.id || undefined,
   name: route.query.name || undefined,
@@ -20,6 +22,7 @@ const createStatus = async (data: StatusCreate) => {
     name: data.name,
     color: data.color.toUpperCase()
   })
+
   statusStore.getStatus(filters)
   modals.create = false
 }
