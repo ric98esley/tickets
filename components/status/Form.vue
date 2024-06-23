@@ -2,6 +2,13 @@
 import Joi from 'joi'
 import type { FormSubmitEvent } from '#ui/types'
 
+const props = defineProps({
+  form: {
+    type: Object as PropType<StatusCreate>,
+    default: () => ({ name: '', color: '' })
+  }
+})
+
 const schema = Joi.object({
   name: Joi.string().required().min(3).max(30)
     .messages({
@@ -22,9 +29,11 @@ const schema = Joi.object({
     })
 })
 
+
+
 const form = ref({
-  name: '',
-  color: ''
+  name: props.form.name,
+  color: props.form.color
 })
 
 const emit = defineEmits({

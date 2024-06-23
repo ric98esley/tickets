@@ -23,7 +23,6 @@ const props = defineProps({
   },
 })
 
-
 const columns = [{
   key: 'id',
   label: 'ID'
@@ -39,6 +38,12 @@ const columns = [{
   label: 'Acciones'
 }]
 
+const modals = reactive({
+  edit: false
+})
+
+const statusToEdit = ref<Status | null>(null)
+
 const emit = defineEmits(['update:filters', 'refresh'])
 
 const filters = computed({
@@ -51,18 +56,31 @@ const deleteStatus = async (row: Status) => {
   emit('refresh')
 }
 
+const updateStatus = async (data: StatusUpdate) => {
+  await statusStore.updateStatus({
+    id: statusToEdit.value.id,
+    name: data.name,
+    color: data.color.toUpperCase()
+  })
+  modals.edit = false
+  emit('refresh')
+}
+
 const items = (row: Status) => [
   [{
     label: 'Editar',
     icon: 'i-heroicons-pencil-square-20-solid',
-    click: () => console.log('Edit', row.id)
+    click: () => {
+      statusToEdit.value = row
+      statusToEdit.value = row
+      modals.edit = true
+    }
   },], [{
     label: 'Borrar',
     icon: 'i-heroicons-trash-20-solid',
-    click: () => statusStore.deleteStatus(row)
+    click: () => deleteStatus(row)
   }]
 ]
-
 </script>
 
 <template>
@@ -89,5 +107,13 @@ const items = (row: Status) => [
       </template>
     </UTable>
     <Pagination :total="props.total" v-model:limit="filters.limit" v-model:page="filters.page" />
+    <UModal v-model="modals.edit">
+      <UCard class="p-4">
+        <template #header>
+          Editar Status: {{ statusToEdit?.name }}
+        </template>
+        <StatusForm @submit="updateStatus" :form="statusToEdit" />
+      </UCard>
+    </UModal>
   </div>
 </template>

@@ -55,7 +55,7 @@ onMounted(() => {
         :data="statusStore.status"
         :total="statusStore.totalPages"
         v-model:filters="filters"
-        @refresh="() => statusStore.getStatus(filters)" />
+        @refresh="statusStore.getStatus(filters)" />
     </UCard>
     <UModal v-model="modals.create">
       <UCard class="p-4">

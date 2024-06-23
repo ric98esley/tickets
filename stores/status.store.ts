@@ -11,7 +11,6 @@ export const useStatusStore = defineStore('List Status', () => {
     })
   }
 
-
   async function getStatus(data: StatusFind) {
     const { rows, total } = await useFindStatus({ ...data })
 
