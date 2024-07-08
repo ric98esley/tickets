@@ -5,6 +5,8 @@ const router = useRouter()
 
 const { $pb } = useNuxtApp()
 
+const toast = useToast()
+
 definePageMeta({
   layout: 'auth'
 })
@@ -29,6 +31,11 @@ async function onSubmit(event: FormSubmitEvent<any>) {
     );
     router.push('/')
   } catch (error) {
+    toast.add({
+      title: 'Error',
+      description: 'Correo o contraseña incorrectos',
+      color: 'red'
+    })
     console.error(error)
   }
 }

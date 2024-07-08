@@ -18,8 +18,8 @@ export interface User {
   name:            string;
   role:            string;
   avatar:          string;
-  created:         Date;
   email:           string;
-  updated:         Date;
   verified:        boolean;
+  updated:         Date;
+  created:         Date;
 }

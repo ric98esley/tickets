@@ -38,6 +38,20 @@ export async function useFindTickets(data: FindTickets): Promise<Ticket[]> {
   }
 }
 
+export async function useFindOneTicket(id: string): Promise<Ticket | null> {
+  try {
+    const { $pb } = useNuxtApp()
+    const ticket = await $pb.collection<TicketResponse>('tickets').getOne(id, {
+      expand: 'created_by,assigned_to,status',
+    })
+
+    return ticketEntityMapper(ticket)
+  } catch (error) {
+    console.log(error)
+    return null
+  }
+}
+
 export async function subscribeTickets(callback: (ticket: Ticket, action: string) => void) {
   const { $pb } = useNuxtApp()
   $pb.collection<TicketResponse>('tickets').subscribe('*', (e) => {

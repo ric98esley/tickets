@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { Ticket } from "~/types";
+
 const props = defineProps({
   data: {
     type: Array as PropType<Ticket[]>,

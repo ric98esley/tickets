@@ -5,6 +5,7 @@ const props = defineProps(
   {
     data: {
       type: Object as PropType<Ticket>,
+      required: true,
     },
   }
 )
@@ -12,16 +13,21 @@ const props = defineProps(
 </script>
 
 <template>
-  <UCard v-if="props.data" class="w-72 h-80 lg:w-96 lg:h-[400px] flex-col" :ui="{ divide: '' }">
+  <UCard v-if="props.data" class="w-72 h-80 lg:w-96 lg:h-[400px] flex-col cursor-pointer" :ui="{ divide: '' }"
+    @click="navigateTo(`/tickets/${props.data.id}`)">
     <template #header>
       <div class="flex items-center justify-between h-16">
         <div class="flex justify-between items-center overflow-hidden">
           <span class="text-lg md:text-2xl lg:text-3xl font-semibold">{{ props.data?.agentCode }}</span>
         </div>
-        <UBadge class="flex items-center text-center p-2 overflow-hidden"
-          :style="{ ['background-color']: props.data.status?.color }">
-          {{ props.data.status?.name }}
-        </UBadge>
+        <div class="flex">
+          <UBadge class="flex items-center text-center p-2 overflow-hidden"
+            :style="{ ['background-color']: props.data.status?.color }">
+            {{ props.data.status?.name }}
+          </UBadge>
+          <UButton icon="i-heroicons-ellipsis-vertical-16-solid" size="sm" color="primary" variant="link"
+            :trailing="false" />
+        </div>
       </div>
     </template>
     <div class="h-28 md:h-28 flex flex-col">
@@ -50,8 +56,8 @@ const props = defineProps(
     <template #footer>
       <div class="flex items-center justify-between">
         <div class="flex items-center">
-          <UAvatar size="xs" :src="props.data.createdBy.avatar" alt="Avatar" class="m-2" />
-          <span class="font-light text-gray-200"> {{ props.data.createdBy.name }}</span>
+          <UAvatar size="xs" :src="props.data?.createdBy?.avatar" alt="Avatar" class="m-2" />
+          <span class="font-light text-gray-200"> {{ props.data?.createdBy?.name }}</span>
         </div>
         <span class="text-sm text-gray-500">{{ timeSince(props.data?.createdAt) }}</span>
       </div>

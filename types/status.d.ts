@@ -12,8 +12,8 @@ export interface Status {
   id: string;
   name: string;
   color: string;
-  updated: Date;
-  created: Date;
+  updated?: Date;
+  created?: Date;
 }
 
 export interface StatusCreate {
