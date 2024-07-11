@@ -40,3 +40,14 @@ export interface Ticket {
   updatedAt:      Date;
 }
 
+export interface TicketCreate {
+  customerName: string;
+  phone:        string;
+  agentCode:    string;
+  senderId?:     number;
+  conversationId?: number;
+  assignedTo?:   string;
+  status:       string;
+  content:     string;
+}
+

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Joi from 'joi'
 import type { FormSubmitEvent } from '#ui/types'
+import type { StatusCreate } from '~/types';
 
 const props = defineProps({
   form: {

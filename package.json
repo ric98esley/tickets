@@ -13,9 +13,11 @@
   "dependencies": {
     "@nuxt/ui": "2.17.0",
     "@pinia/nuxt": "^0.5.1",
+    "@tiptap/extension-bubble-menu": "^2.4.0",
     "dayjs": "^1.11.11",
     "joi": "^17.13.1",
     "nuxt": "3.12.2",
+    "nuxt-tiptap-editor": "^1.1.2",
     "pinia": "2.1.7",
     "pocketbase": "^0.21.3",
     "vue": "^3.4.27",

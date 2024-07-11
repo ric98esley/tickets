@@ -44,9 +44,9 @@ const links = reactive([{
   to: `/status`,
   click: () => isOpen.value = false
 }, {
-  label: 'Command Palette',
-  icon: 'i-heroicons-command-line',
-  to: '/',
+  label: 'rutas',
+  icon: 'i-heroicons-truck-solid',
+  to: '/rutas',
   click: () => isOpen.value = false
 }])
 
