@@ -1,4 +1,4 @@
-import type { Ticket, TicketResponse } from "~/types"
+import type { Ticket, TicketCreate, TicketResponse } from "~/types"
 import { ticketEntityMapper } from "~/utils/ticket-map"
 
 interface FindTickets {
@@ -47,6 +47,25 @@ export async function useFindOneTicket(id: string): Promise<Ticket | null> {
 
     return ticketEntityMapper(ticket)
   } catch (error) {
+    console.log(error)
+    return null
+  }
+}
+
+export async function useCreateTicket(data: TicketCreate): Promise<Ticket | null> {
+  try {
+    const { $pb } = useNuxtApp()
+    const ticket = await $pb.collection<TicketResponse>('tickets').create({
+      ...data,
+    })
+
+    return ticketEntityMapper(ticket)
+  } catch (error) {
+    const toast = useToast()
+    toast.add({
+      title:'Error al crear el ticket intenta de nuevo',
+      color: 'red',
+    })
     console.log(error)
     return null
   }

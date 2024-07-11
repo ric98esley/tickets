@@ -50,8 +50,27 @@ const state = reactive<{
   error: null,
 })
 
-const handlerSubmit = (event: FormSubmitEvent<TicketCreate>) => {
-  console.log(event)
+const handlerSubmit = async (event: FormSubmitEvent<TicketCreate>) => {
+  const toast = useToast()
+  if (!event.data.content) {
+    return toast.add({
+      title: 'Error',
+      description: 'El contenido es requerido',
+      color: 'red',
+    })
+  }
+  const ticket = await useCreateTicket(event.data)
+  if(!ticket) return
+  const thread = await useCreateThread({
+    ticket: ticket.id,
+    content: event.data.content,
+  })
+
+  toast.add({
+    title: 'Ticket creado',
+    description: 'El ticket ha sido creado correctamente',
+    color: 'green',
+  })
 }
 </script>
 
