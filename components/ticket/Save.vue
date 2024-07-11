@@ -2,7 +2,11 @@
 import Joi from 'joi'
 
 import type { FormSubmitEvent } from '#ui/types'
-import type { TicketCreate } from '~/types';
+import type { Status, TicketCreate } from '~/types';
+
+const loadings = reactive({
+  status: false,
+})
 
 const createTicketSchema = Joi.object({
   customerName: Joi.string().required().messages(
@@ -30,6 +34,7 @@ const createTicketSchema = Joi.object({
   senderId: Joi.string(),
   content: Joi.string(),
 })
+
 
 const state = reactive<{
   form: TicketCreate
@@ -60,7 +65,7 @@ const handlerSubmit = async (event: FormSubmitEvent<TicketCreate>) => {
     })
   }
   const ticket = await useCreateTicket(event.data)
-  if(!ticket) return
+  if (!ticket) return
   const thread = await useCreateThread({
     ticket: ticket.id,
     content: event.data.content,
@@ -72,12 +77,13 @@ const handlerSubmit = async (event: FormSubmitEvent<TicketCreate>) => {
     color: 'green',
   })
 }
+
 </script>
 
 <template>
   <UForm :schema="createTicketSchema" class="space-y-4" :state="state.form" @submit="handlerSubmit">
     <UFormGroup label="Nombre" name="customerName">
-      <UInput v-model="state.form.customerName"/>
+      <UInput v-model="state.form.customerName" />
     </UFormGroup>
     <UFormGroup label="Teléfono" name="phone">
       <UInput v-model="state.form.phone" label="Teléfono" />
@@ -86,7 +92,7 @@ const handlerSubmit = async (event: FormSubmitEvent<TicketCreate>) => {
       <UInput v-model="state.form.agentCode" label="Código de agencia" />
     </UFormGroup>
     <UFormGroup label="Status" name="status">
-      <UInput v-model="state.form.status" label="Estado" />
+      <StatusSelect v-model="state.form.status"/>
     </UFormGroup>
     <UFormGroup label="Asignado a" name="assignedTo">
       <UInput v-model="state.form.assignedTo" label="Asignado a" />

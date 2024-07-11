@@ -1,5 +1,6 @@
 <script setup lang="ts">
-const route = useRoute()
+import type { Status, StatusCreate, StatusFind, StatusUpdate } from '~/types';
+
 const statusStore = useStatusStore()
 
 const props = defineProps({
@@ -42,7 +43,7 @@ const modals = reactive({
   edit: false
 })
 
-const statusToEdit = ref<Status | null>(null)
+const statusToEdit = ref<Status | undefined>(undefined)
 
 const emit = defineEmits(['update:filters', 'refresh'])
 
@@ -56,11 +57,13 @@ const deleteStatus = async (row: Status) => {
   emit('refresh')
 }
 
-const updateStatus = async (data: StatusUpdate) => {
+const updateStatus = async (data: StatusCreate) => {
+  if (!statusToEdit.value) return
+
   await statusStore.updateStatus({
     id: statusToEdit.value.id,
     name: data.name,
-    color: data.color.toUpperCase()
+    color: data.color?.toUpperCase() || ''
   })
   modals.edit = false
   emit('refresh')
