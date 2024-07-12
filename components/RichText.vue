@@ -45,9 +45,15 @@ const props = defineProps({
     required: true
   }
 });
+
+const emit = defineEmits(["update:modelValue"]);
+
 const editor = useEditor({
   content: props.modelValue,
   extensions: [TiptapStarterKit],
+  onUpdate: ({ editor }) => {
+    emit("update:modelValue", editor.getHTML());
+  },
   editorProps: {
     attributes: {
       class:
@@ -55,7 +61,6 @@ const editor = useEditor({
     }
   },
 });
-
 
 
 onBeforeUnmount(() => {

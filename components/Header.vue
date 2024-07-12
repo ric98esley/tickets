@@ -12,8 +12,8 @@ const userAvatar = ref(userStore.user?.avatar)
 const isOpen = ref(false)
 
 const logout = async () => {
-  await $pb.authStore.clear()
-  await userStore.logout()
+  $pb.authStore.clear()
+  userStore.logout()
   await router.push('/login')
 }
 
@@ -74,7 +74,7 @@ const items = [
 <template>
   <header class="flex-col min-h-12">
     <div class="flex justify-between border-b border-gray-200 dark:border-gray-800 min-h-12">
-      <UButton icon="i-heroicons-bars-3-16-solid" class="sm:hidden pl-4" size="sm" color="primary" square variant="link"
+      <UButton icon="i-heroicons-bars-3-16-solid" class="md:hidden pl-4" size="sm" color="primary" square variant="link"
         @click="isOpen = true" />
       <UHorizontalNavigation :links="links" class="hidden md:flex" />
       <div class="flex content-center pr-4">

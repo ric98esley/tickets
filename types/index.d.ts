@@ -1,6 +1,6 @@
 export { TicketResponse, Ticket, TicketCreate } from './tickets.d.ts'
 
-export { User } from './user.d.ts'
+export { User, UserFind, UserResponse } from './user.d.ts'
 
 export { Status, StatusResponse, StatusCreate, StatusDelete, StatusFind, StatusUpdate } from './status.d.ts'
 

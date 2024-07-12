@@ -23,3 +23,13 @@ export interface User {
   updated:         Date;
   created:         Date;
 }
+
+export interface UserFind {
+  id?: string;
+  username?: string;
+  name?: string;
+  email?: string;
+  role?: string;
+  page?: number;
+  limit?: number;
+}

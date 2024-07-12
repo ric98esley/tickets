@@ -7,7 +7,9 @@ export const userMapper = (data: UserResponse): User => {
     username: data.username,
     name: data.name,
     role: data.role,
-    avatar: `${pocketBaseURL}/api/files/${data.collectionName}/${data.id}/${data.avatar}`,
+    avatar: data.avatar
+      ? `${pocketBaseURL}/api/files/${data.collectionName}/${data.id}/${data.avatar}`
+      : `https://avatar.iran.liara.run/username?username=${data.username}&size=64`,
     created: data.created,
     email: data.email,
     updated: data.updated,

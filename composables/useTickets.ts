@@ -55,15 +55,21 @@ export async function useFindOneTicket(id: string): Promise<Ticket | null> {
 export async function useCreateTicket(data: TicketCreate): Promise<Ticket | null> {
   try {
     const { $pb } = useNuxtApp()
+    const userStore = useUserStore()
     const ticket = await $pb.collection<TicketResponse>('tickets').create({
       ...data,
+      agent_code: data.agentCode,
+      customer_name: data.customerName,
+      created_by: userStore.user?.id,
+    }, {
+      expand: 'created_by,assigned_to,status',
     })
 
     return ticketEntityMapper(ticket)
   } catch (error) {
     const toast = useToast()
     toast.add({
-      title:'Error al crear el ticket intenta de nuevo',
+      title: 'Error al crear el ticket intenta de nuevo',
       color: 'red',
     })
     console.log(error)
