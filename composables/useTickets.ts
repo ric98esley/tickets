@@ -77,6 +77,28 @@ export async function useCreateTicket(data: TicketCreate): Promise<Ticket | null
   }
 }
 
+export async function useDeleteTicket(id: string): Promise<boolean> {
+  const toast = useToast()
+  try {
+    const { $pb } = useNuxtApp()
+    await $pb.collection<TicketResponse>('tickets').delete(id)
+
+    toast.add({
+      title: 'Ticket eliminado correctamente',
+      color: 'green',
+    })
+
+    return true
+  } catch (error) {
+    console.log(error)
+    toast.add({
+      title: 'Error al eliminar el ticket intenta de nuevo',
+      color: 'red',
+    })
+    return false
+  }
+}
+
 export async function subscribeTickets(callback: (ticket: Ticket, action: string) => void) {
   const { $pb } = useNuxtApp()
   $pb.collection<TicketResponse>('tickets').subscribe('*', (e) => {

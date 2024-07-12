@@ -27,7 +27,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
+  <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 place-items-center">
     <TicketCard v-for="ticket in props.data" :key="ticket.id" :data="ticket" />
   </div>
 </template>

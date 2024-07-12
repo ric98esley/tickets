@@ -36,7 +36,6 @@ export const useTicketsStore = defineStore('List tickets', () => {
   function realtimeTicketHandlers() {
     subscribeTickets((ticket, action) => {
       if (action === 'create' || action === 'update') {
-        console.log('add ticket', ticket)
         addTicket(ticket)
       }
       else if (action === 'delete') {

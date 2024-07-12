@@ -2,6 +2,20 @@
 import type { FormError, FormSubmitEvent } from '#ui/types'
 import type { TicketCreate } from '~/types';
 
+
+
+const props = defineProps({
+  form: {
+    type: Object as PropType<TicketCreate>,
+    default: () => ({ customerName: '', phone: '', assignedTo: '', status: '', agentCode: '', conversationId: undefined, senderId: undefined, content: '' })
+  }
+})
+
+const emit = defineEmits({
+  submit: (data: TicketCreate) => true,
+  'update:form': (value: TicketCreate) => true
+})
+
 const disabledSubmit = ref(false)
 
 const validate = (state: TicketCreate): FormError[] => {
@@ -27,64 +41,32 @@ const state = reactive<{
   loading: boolean
   error: any
 }>({
-  form: {
-    customerName: "",
-    phone: "",
-    assignedTo: "",
-    status: "",
-    agentCode: "",
-    conversationId: undefined,
-    senderId: undefined,
-    content: "",
-  },
+  form: props.form,
   loading: false,
   error: null,
 })
 
-const handlerSubmit = async (event: FormSubmitEvent<TicketCreate>) => {
+const submit = (event: FormSubmitEvent<TicketCreate>) => {
   disabledSubmit.value = true
-  console.log(event.data.content)
-  const toast = useToast()
-  if (!event.data.content || event.data.content === "<p></p>") {
-    toast.add({
-      title: 'Error',
-      description: 'El contenido es requerido',
-      color: 'red',
-    })
-    return
-  }
-  const ticket = await useCreateTicket(event.data)
-  if (!ticket) return;
-
-  const thread = await useCreateThread({
-    ticket: ticket.id,
-    content: event.data.content,
-  })
-
-  toast.add({
-    title: 'Ticket creado',
-    description: 'El ticket ha sido creado correctamente',
-    color: 'green',
-  })
-
+  emit('submit', event.data)
   disabledSubmit.value = false
 }
 
 </script>
 
 <template>
-  <UForm :validate="validate" :state="state.form" class="space-y-4"  @submit="handlerSubmit">
+  <UForm :validate="validate" :state="state.form" class="space-y-4" @submit="submit">
     <UFormGroup label="Nombre" name="customerName">
       <UInput v-model="state.form.customerName" />
     </UFormGroup>
     <UFormGroup label="Teléfono" name="phone">
-      <UInput v-model="state.form.phone" label="Teléfono" type="number"/>
+      <UInput v-model="state.form.phone" label="Teléfono" type="number" />
     </UFormGroup>
     <UFormGroup label="Código de agencia" name="agentCode">
       <UInput v-model="state.form.agentCode" label="Código de agencia" />
     </UFormGroup>
     <UFormGroup label="Status" name="status">
-      <StatusSelect v-model="state.form.status"/>
+      <StatusSelect v-model="state.form.status" />
     </UFormGroup>
     <UFormGroup label="Asignar a" name="assignedTo">
       <UserSelect v-model="state.form.assignedTo" />
@@ -100,12 +82,12 @@ const handlerSubmit = async (event: FormSubmitEvent<TicketCreate>) => {
           <UInput v-model="state.form.senderId" type="number" label="ID del remitente" />
         </UFormGroup>
       </div>
-      </div>
+    </div>
     <UFormGroup label="Contenido" name="content">
       <RichText v-model="state.form.content" />
     </UFormGroup>
-      <UButton :disable="disabledSubmit" key="save_ticket" type="submit">
-        Guardar
-      </UButton>
+    <UButton :disable="disabledSubmit" key="save_ticket" type="submit">
+      Guardar
+    </UButton>
   </UForm>
 </template>
