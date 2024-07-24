@@ -2,24 +2,24 @@ import type { Status, StatusResponse } from "./status";
 import type { User, UserResponse } from "./user";
 
 interface Expand {
-  assigned_to: UserResponse;
-  created_by:  UserResponse;
+  assignedTo: UserResponse;
+  createdBy:  UserResponse;
   status:      StatusResponse;
 }
 export interface TicketResponse {
   id:              string;
   created:         Date;
   updated:         Date;
-  customer_name:   string;
+  customerName:   string;
   phone:           string;
-  created_by:      string;
-  assigned_to:     string;
+  createdBy:      string;
+  assignedTo:     string;
   status:          string;
-  agent_code:      string;
-  conversation_id: number;
-  sender_id:       number;
-  is_closed:       boolean;
-  closed_at:       Date;
+  agentCode:      string;
+  conversationId: number;
+  senderId:       number;
+  isClosed:       boolean;
+  closedAt:       Date;
   expand:          Expand;
 }
 
@@ -41,13 +41,31 @@ export interface Ticket {
 }
 
 export interface TicketCreate {
+  id?:           string;
   customerName: string;
   phone:        string;
   agentCode:    string;
   senderId?:     number;
   conversationId?: number;
+  isClosed?:     boolean;
   assignedTo?:   string;
   status:       string;
   content:     string;
+}
+
+export interface TicketUpdate {
+  customerName?: string;
+  phone?: string;
+  agentCode?: string;
+  senderId?: number;
+  conversationId?: number;
+  isClosed?: boolean;
+  assignedTo?: string;
+  status?: string;
+  content?: string;
+}
+
+export interface TicketResolve {
+  content: string
 }
 

@@ -27,6 +27,12 @@ watch(user, (value) => {
     emit('update:modelValue', value.id)
   }
 })
+
+onMounted(async () => {
+  if (props.modelValue) {
+    user.value = await useFindOneUser(props.modelValue) || undefined
+  }
+})
 </script>
 <template>
   <USelectMenu name="status" v-model="user" :loading="loading" :searchable="searchUsers"

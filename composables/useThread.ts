@@ -4,7 +4,7 @@ export const useListThread = async (ticketId: string): Promise<Thread[]> => {
   try {
     const { $pb } = useNuxtApp()
     const resultList = await $pb.collection<ThreadResponse>('ticket_thread').getFullList({
-      expand: 'created_by,ticket,in_response_to',
+      expand: 'createdBy,ticket,inResponseTo',
       sort: 'created',
       filter: `ticket = '${ticketId}'`
     })
@@ -32,10 +32,10 @@ export const useCreateThread = async (thread: CreateThread): Promise<Thread | un
     const data = await $pb.collection<ThreadResponse>('ticket_thread').create(
       {
         ...thread,
-        created_by: userStore.user.id
+        createdBy: userStore.user.id
       },
       {
-        expand: 'created_by,ticket,in_response_to',
+        expand: 'createdBy,ticket,inResponseTo',
       }
     )
     return threadEntityMapper(data)

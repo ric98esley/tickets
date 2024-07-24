@@ -1,4 +1,4 @@
-import type { Ticket, TicketCreate, TicketResponse } from "~/types"
+import type { Ticket, TicketCreate, TicketResponse, TicketUpdate } from "~/types"
 import { ticketEntityMapper } from "~/utils/ticket-map"
 
 interface FindTickets {
@@ -23,7 +23,7 @@ export async function useFindTickets(data: FindTickets): Promise<Ticket[]> {
   try {
     const { $pb } = useNuxtApp()
     const resultList = await $pb.collection<TicketResponse>('tickets').getList(1, 0, {
-      expand: 'created_by,assigned_to,status',
+      expand: 'createdBy,assignedTo,status',
       sort: 'created',
     })
 
@@ -42,7 +42,7 @@ export async function useFindOneTicket(id: string): Promise<Ticket | null> {
   try {
     const { $pb } = useNuxtApp()
     const ticket = await $pb.collection<TicketResponse>('tickets').getOne(id, {
-      expand: 'created_by,assigned_to,status',
+      expand: 'createdBy,assignedTo,status',
     })
 
     return ticketEntityMapper(ticket)
@@ -58,11 +58,11 @@ export async function useCreateTicket(data: TicketCreate): Promise<Ticket | null
     const userStore = useUserStore()
     const ticket = await $pb.collection<TicketResponse>('tickets').create({
       ...data,
-      agent_code: data.agentCode,
-      customer_name: data.customerName,
-      created_by: userStore.user?.id,
+      agentCode: data.agentCode,
+      customerName: data.customerName,
+      createdBy: userStore.user?.id,
     }, {
-      expand: 'created_by,assigned_to,status',
+      expand: 'createdBy,assignedTo,status',
     })
 
     return ticketEntityMapper(ticket)
@@ -70,6 +70,26 @@ export async function useCreateTicket(data: TicketCreate): Promise<Ticket | null
     const toast = useToast()
     toast.add({
       title: 'Error al crear el ticket intenta de nuevo',
+      color: 'red',
+    })
+    console.log(error)
+    return null
+  }
+}
+
+export async function useUpdateTicket(id: string, data: TicketUpdate): Promise<Ticket | null> {
+  try {
+    const { $pb } = useNuxtApp()
+    const ticket = await $pb.collection<TicketResponse>('tickets').update(id,
+      data, {
+      expand: 'createdBy,assignedTo,status',
+    })
+
+    return ticketEntityMapper(ticket)
+  } catch (error) {
+    const toast = useToast()
+    toast.add({
+      title: 'Error al actualizar el ticket intenta de nuevo',
       color: 'red',
     })
     console.log(error)
@@ -105,7 +125,7 @@ export async function subscribeTickets(callback: (ticket: Ticket, action: string
     callback(ticketEntityMapper(e.record), e.action)
   },
     {
-      expand: 'created_by,assigned_to,status',
+      expand: 'createdBy,assignedTo,status',
     }
   )
 }

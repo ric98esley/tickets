@@ -34,6 +34,17 @@ export async function useFindStatus(data: StatusFind): Promise<{ total: number, 
   }
 }
 
+export async function useFindOneStatus(id: string): Promise<Status | null> {
+  try {
+    const { $pb } = useNuxtApp()
+    const status = await $pb.collection<StatusResponse>('status').getOne(id)
+
+    return statusMapper(status)
+  } catch (error) {
+    return null
+  }
+}
+
 export async function useSaveStatus(data: StatusCreate): Promise<Status | undefined> {
   try {
     const { $pb } = useNuxtApp()

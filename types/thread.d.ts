@@ -2,9 +2,9 @@ import type { Ticket, TicketResponse } from "./tickets";
 import type { User } from "./user";
 
 interface Expand {
-  created_by?:  UserResponse;
+  createdBy?:  UserResponse;
   ticket:      TicketResponse;
-  in_response_to?: ThreadResponse;
+  inResponseTo?: ThreadResponse;
 }
 
 export interface ThreadResponse {
@@ -14,10 +14,10 @@ export interface ThreadResponse {
   created:        Date;
   updated:        Date;
   content:        string;
-  in_response_to: string;
+  inResponseTo: string;
   ticket:         string;
   expand:         Expand;
-  created_by:     string;
+  createdBy:     string;
 }
 
 export interface Thread {

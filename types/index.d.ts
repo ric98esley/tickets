@@ -1,4 +1,4 @@
-export { TicketResponse, Ticket, TicketCreate } from './tickets.d.ts'
+export { TicketResponse, Ticket, TicketCreate, TicketUpdate, TicketResolve } from './tickets.d.ts'
 
 export { User, UserFind, UserResponse } from './user.d.ts'
 

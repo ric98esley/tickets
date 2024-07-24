@@ -39,3 +39,16 @@ export const useFindUser = async (data: UserFind) : Promise<FindUsers>=> {
     }
   }
 }
+
+export const useFindOneUser = async (id: string): Promise<User | null> => {
+  try {
+    const { $pb } = useNuxtApp()
+    const user = await $pb.collection<UserResponse>('users').getOne(id, {
+      expand: 'role'
+    })
+    
+    return userMapper(user)
+  } catch (error) {
+    return null
+  }
+}

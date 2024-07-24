@@ -2,8 +2,6 @@
 import type { FormError, FormSubmitEvent } from '#ui/types'
 import type { TicketCreate } from '~/types';
 
-
-
 const props = defineProps({
   form: {
     type: Object as PropType<TicketCreate>,
@@ -69,7 +67,7 @@ const submit = (event: FormSubmitEvent<TicketCreate>) => {
       <StatusSelect v-model="state.form.status" />
     </UFormGroup>
     <UFormGroup label="Asignar a" name="assignedTo">
-      <UserSelect v-model="state.form.assignedTo" />
+      <UserSelect v-model="state.form.assignedTo!" />
     </UFormGroup>
     <div class="columns-2">
       <div>

@@ -1,8 +1,13 @@
 <script setup lang="ts">
 import { TicketDelete } from "#components";
-import type { Ticket } from "~/types";
+import type { Ticket, TicketCreate, TicketResolve } from "~/types";
 
 const modal = useModal()
+
+const modals = reactive({
+  update: false,
+  resolve: false,
+})
 
 const props = defineProps(
   {
@@ -13,15 +18,63 @@ const props = defineProps(
   }
 )
 
+const ticketToEdit = ref<TicketCreate>({
+  id: props.data.id,
+  customerName: props.data.customerName,
+  phone: props.data.phone,
+  assignedTo: props.data.assignedTo?.id ?? '',
+  status: props.data.status?.id ?? '',
+  agentCode: props.data.agentCode,
+  conversationId: props.data.conversationId,
+  senderId: props.data.senderId,
+  content: '',
+})
+
+const updateTicket = async (data: TicketCreate) => {
+  if (!ticketToEdit.value.id) return
+  const ticket = await useUpdateTicket(ticketToEdit.value.id, data)
+  if (data.content && data.content !== "<p></p>" && ticket?.id) {
+    const thread = await useCreateThread({
+      ticket: ticket.id,
+      content: data.content,
+    })
+  }
+
+  modals.resolve = false
+  return ticket
+}
+
+const resolveTicket = async (data: TicketResolve) => {
+  if (!data.content) {
+    const toast = useToast()
+    toast.add({ color: 'red', title: 'El contenido es requerido' })
+    return
+  }
+  if (!ticketToEdit.value.id) return
+  const ticket = await useUpdateTicket(ticketToEdit.value.id, { isClosed: true })
+  if (data.content && data.content !== "<p></p>" && ticket?.id) {
+    await useCreateThread({
+      ticket: ticket.id,
+      content: data.content,
+    })
+  }
+
+  modals.update = false
+  return ticket
+}
+
 const items = [[{
   label: 'Editar',
   icon: 'i-heroicons-pencil-square-20-solid',
   click: () => {
-    console.log('Edit')
+    modals.update = true
   }
 }, {
-  label: 'asignar',
-  icon: 'i-heroicons-document-duplicate-20-solid'
+  label: 'Resolver',
+  icon: 'i-heroicons-document-duplicate-20-solid',
+  click: () => {
+    modals.resolve = true
+  }
 }], [{
   label: 'Delete',
   icon: 'i-heroicons-trash-20-solid',
@@ -32,9 +85,6 @@ const items = [[{
   }
 }]
 ]
-
-
-
 </script>
 
 <template>
@@ -111,5 +161,27 @@ const items = [[{
     <div>
       <TicketDelete :id="props.data.id" @success="() => $emit('update:form', true)" />
     </div>
+    <UModal v-model="modals.update" title="Editar Ticket" prevent-close>
+      <UCard>
+        <template #header>
+          <div class="text-lg font-semibold flex justify-between">
+            <h2>Editar ticket</h2>
+            <UButton @click="modals.update = false" icon="i-heroicons-x-mark-16-solid" variant="link" />
+          </div>
+        </template>
+        <TicketForm :form="ticketToEdit" @submit="updateTicket" />
+      </UCard>
+    </UModal>
+    <UModal v-model="modals.resolve" title="Resolver ticket" prevent-close>
+      <UCard>
+        <template #header>
+          <div class="text-lg font-semibold flex justify-between">
+            <h2>Resolver ticket</h2>
+            <UButton @click="modals.resolve = false" icon="i-heroicons-x-mark-16-solid" variant="link" />
+          </div>
+        </template>
+        <TicketResolve :form="ticketToEdit" @submit="resolveTicket" />
+      </UCard>
+    </UModal>
   </div>
 </template>
