@@ -77,16 +77,18 @@ export interface FindTickets {
   sort?: string
   customerName?: string
   phone?: string
+  email?: string
   createdBy?: string
   assignedTo?: string
   status?: string
   agentCode?: string
   conversationId?: number
   senderId?: number
-  isClosed?: boolean
-  closedAt?: Date
-  created?: Date
-  updated?: Date
+  isClosed?: boolean | string
+  closedAtStart?: string
+  closedAtEnd?: string
+  createdStart?: Date
+  createdEnd?: Date
 }
 
 export type FindTicketsKeys = keyof FindTickets

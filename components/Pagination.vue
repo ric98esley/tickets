@@ -20,7 +20,7 @@ const props = defineProps({
 const emit = defineEmits(['update:page', 'update:limit'])
 
 const page = computed({
-  get: () => props.page,
+  get: () => Number(props.page),
   set: (value) => emit('update:page', value),
 })
 
@@ -43,6 +43,6 @@ const limits = [2, 10, 20, 50, 100]
       </span>
     </div>
     <USelect v-model="limit" :options="limits" />
-    <UPagination v-model="page" :total="props.total" :page-count="limit" />
+    <UPagination v-model="page" :total="Number(props.total)" :page-count="Number(limit)" />
   </div>
 </template>

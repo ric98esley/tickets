@@ -3,16 +3,15 @@ import { ticketEntityMapper } from "~/utils/ticket-map"
 
 function makeFilter(data: FindTickets): string {
   let filter = ''
-
+  if (data.id) filter += constructQuery(filter, `id~"${data.id}"`)
   if (data.agentCode) filter += constructQuery(filter, `agentCode~"${data.agentCode}"`)
   if (data.customerName) filter += constructQuery(filter, `customerName~"${data.customerName}"`)
   if (data.createdBy) filter += constructQuery(filter, `createdBy.username~"${data.createdBy}"`)
   if (data.assignedTo) filter += constructQuery(filter, `assignedTo.username~"${data.assignedTo}"`)
   if (data.status) filter += constructQuery(filter, `status.name~"${data.status}"`)
-  if (data.created) filter += constructQuery(filter, `created~"${data.created}"`)
-  if (data.updated) filter += constructQuery(filter, `updated~"${data.updated}"`)
+  if (data.createdStart && data.createdEnd) filter += constructQuery(filter, `created>"${data.createdStart}" && created<"${data.createdEnd}"`)
   if (data.isClosed !== undefined) filter += constructQuery(filter, `isClosed=${data.isClosed}`)
-  if (data.closedAt) filter += constructQuery(filter, `closedAt~"${data.closedAt}"`)
+  if (data.closedAtStart && data.closedAtEnd) filter += constructQuery(filter, `closedAt>"${data.closedAtStart}" && closedAt<"${data.closedAtEnd}"`)
   if (data.conversationId) filter += constructQuery(filter, `conversationId="${data.conversationId}"`)
   if (data.senderId) filter += constructQuery(filter, `senderId="${data.senderId}"`)
   if (data.phone) filter += constructQuery(filter, `phone~"${data.phone}"`)
@@ -20,14 +19,14 @@ function makeFilter(data: FindTickets): string {
   return filter
 }
 
-export async function useFindTickets(data: FindTickets): Promise<Ticket[]> {
+export async function useFindTickets(data: FindTickets): Promise<{ total: number, rows: Ticket[] }> {
   try {
     let filter = makeFilter(data)
 
     const { $pb } = useNuxtApp()
     const resultList = await $pb.collection<TicketResponse>('tickets').getList(data.page ?? 1, data.limit ?? 100, {
       expand: 'createdBy,assignedTo,status',
-      sort: 'created',
+      sort: '-created',
       filter
     })
 
@@ -35,10 +34,16 @@ export async function useFindTickets(data: FindTickets): Promise<Ticket[]> {
       return ticketEntityMapper(data)
     }) ?? []
 
-    return tickets
+    return {
+      total: resultList.totalItems,
+      rows: tickets
+    }
   } catch (error) {
     console.log(error)
-    return []
+    return {
+      total: 0,
+      rows: []
+    }
   }
 }
 

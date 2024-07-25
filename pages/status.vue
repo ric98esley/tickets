@@ -5,8 +5,6 @@ const statusStore = useStatusStore()
 const route = useRoute()
 const router = useRouter()
 
-const toast = useToast()
-
 const filters = reactive({
   id: route.query.id as string || undefined,
   name: route.query.name as string || undefined,

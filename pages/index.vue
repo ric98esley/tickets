@@ -8,7 +8,7 @@ onMounted(async () => {
   const tickets = await ticketsStore.fetchTickets({
     isClosed: false,
   })
-  ticketsStore.addTickets(tickets)
+  ticketsStore.tickets = tickets.rows
 })
 
 onUnmounted(() => {
