@@ -4,6 +4,10 @@ import type { FindTickets, Ticket } from '~/types';
 const route = useRoute()
 const router = useRouter()
 
+const modals = reactive({
+  dates: false
+})
+
 const tickets = reactive<{ total: number, rows: Ticket[] }>({
   total: 0,
   rows: []
@@ -46,5 +50,64 @@ onMounted(async () => {
 </script>
 
 <template>
-  <TicketTable :data="tickets.rows" v-model:filters="filters" :total="tickets.total" @refresh="getTickets(filters)" />
+  <UContainer>
+    <UCard>
+      <template #header>
+        <UButton icon="i-heroicons-funnel-16-solid" label="Filtrar Fechas" @click="modals.dates = true" />
+      </template>
+      <TicketTable :data="tickets.rows" v-model:filters="filters" :total="tickets.total"
+        @refresh="getTickets(filters)" />
+    </UCard>
+    <UModal v-model="modals.dates">
+      <UCard>
+        <template #header>
+          <div class="text-lg font-semibold flex justify-between">
+            <h2>Filtrar por fechas</h2>
+            <UButton @click="modals.dates = false" icon="i-heroicons-x-mark-16-solid" variant="link" />
+          </div>
+        </template>
+        <div class="flex flex-col gap-4">
+          <div class="flex flex-col gap-2">
+            <h2 class="text-lg font-semibold">Fecha de creación</h2>
+            <div class="flex items-center justify-around">
+              <UPopover :popper="{ placement: 'bottom-start' }">
+                <UButton icon="i-heroicons-calendar-days-20-solid" label="Desde" />
+                <template #panel="{ close }">
+                  <DatePicker v-model="filters.createdStart" is-required @close="close" />
+                </template>
+              </UPopover>
+              -
+              <UPopover>
+                <UButton icon="i-heroicons-calendar-days-20-solid" label="Hasta" />
+                <template #panel="{ close }">
+                  <DatePicker v-model="filters.createdStart" is-required @close="close" />
+                </template>
+              </UPopover>
+              <UButton variant="ghost" icon="i-heroicons-x-mark-16-solid" @click="filters.createdStart = filters.createdEnd = undefined" />
+            </div>
+          </div>
+          <div class="flex flex-col gap-2">
+            <h2 class="text-lg font-semibold">Fecha de resolución</h2>
+            <div class="flex items-center justify-around">
+              <UPopover :popper="{ placement: 'bottom-start' }">
+                <UButton icon="i-heroicons-calendar-days-20-solid" label="Desde" />
+                <template #panel="{ close }">
+                  <DatePicker v-model="filters.closedAtStart" is-required @close="close" />
+                </template>
+              </UPopover>
+              -
+              <UPopover>
+                <UButton icon="i-heroicons-calendar-days-20-solid" label="Hasta" />
+                <template #panel="{ close }">
+                  <DatePicker v-model="filters.closedAtEnd" is-required @close="close" />
+                </template>
+              </UPopover>
+              <UButton variant="ghost" icon="i-heroicons-x-mark-16-solid" @click="filters.createdStart = filters.createdEnd = undefined" />
+            </div>
+          </div>
+        </div>
+      </UCard>
+    </UModal>
+  </UContainer>
+
 </template>

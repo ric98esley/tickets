@@ -52,9 +52,12 @@ const columns = [{
   key: 'assignedTo.name',
   label: 'Asignado a'
 }, {
+  key: 'closedAt',
+  label: 'Resuelto el'
+}, {
   key: 'timeSince',
   label: 'Creado el'
-},{
+}, {
   key: 'isClosed',
   label: 'Resuelto'
 }, {
@@ -117,7 +120,7 @@ const items = (row: Ticket) => [
         onSubmit: (form) => resolveTicket(row.id, form),
       })
     }
-  }],[
+  }], [
     {
       label: 'Ver',
       icon: 'i-heroicons-eye-20-solid',
@@ -129,11 +132,11 @@ const items = (row: Ticket) => [
     label: 'Borrar',
     icon: 'i-heroicons-trash-20-solid',
     click: () => {
-    modal.open(TicketDelete, {
-      id: row.id,
-      onSuccess: () => emit('update:form', true)
-    })
-  }
+      modal.open(TicketDelete, {
+        id: row.id,
+        onSuccess: () => emit('update:form', true)
+      })
+    }
   }]
 ]
 
@@ -146,13 +149,14 @@ const resolve = [
 
 <template>
   <UContainer>
-    <div class="flex px-3 py-3.5 border-b border-gray-200 dark:border-gray-700">
+    <div class="flex justify-end px-3 py-3.5 border-b border-gray-200 dark:border-gray-700">
       <USelectMenu v-model="selectedColumns" :options="columns" multiple placeholder="Columnas" label="Selecciona">
         <template #label>
           <span class="truncate">{{ selectedColumns.length }}</span>
-          <span>Seleccionados</span>
+          <span>Columnas</span>
         </template>
       </USelectMenu>
+      <UButton variant="ghost" icon="i-heroicons-arrow-path-rounded-square-20-solid" label="Refrescar" @click="emit('refresh')" />
     </div>
     <UTable :rows="props.data" :columns="selectedColumns">
       <template #id-header>
@@ -176,8 +180,11 @@ const resolve = [
       <template #phone-data="{ row }">
         <a class="text-primary" :href="'tel:' + row.phone">{{ row.phone }}</a>
       </template>
+      <template #closedAt-data="{ row }">
+        {{ row.closedAt ? dateFormattedWithTime(row.closedAt): 'No resuelto' }}
+      </template>
       <template #isClosed-header>
-        <USelectMenu v-model="filters.isClosed" :options="resolve" placeholder="Resuelto" valueAttribute="value"/>
+        <USelectMenu v-model="filters.isClosed" :options="resolve" placeholder="Resuelto" valueAttribute="value" />
       </template>
       <template #isClosed-data="{ row }">
         <UBadge :color="row.isClosed ? 'green' : 'red'">{{ row.isClosed ? 'Resuelto' : 'Pendiente' }}</UBadge>
