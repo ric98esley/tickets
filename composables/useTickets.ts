@@ -1,30 +1,34 @@
-import type { Ticket, TicketCreate, TicketResponse, TicketUpdate } from "~/types"
+import type { FindTickets, Ticket, TicketCreate, TicketResponse, TicketUpdate } from "~/types"
 import { ticketEntityMapper } from "~/utils/ticket-map"
 
-interface FindTickets {
-  page?: number
-  limit?: number
-  sort?: string
-  customerName?: string
-  phone?: string
-  createdBy?: string
-  assignedTo?: string
-  status?: string
-  agentCode?: string
-  conversationId?: number
-  senderId?: number
-  isClosed?: boolean
-  closedAt?: Date
-  createdAt?: Date
-  updatedAt?: Date
+function makeFilter(data: FindTickets): string {
+  let filter = ''
+
+  if (data.agentCode) filter += constructQuery(filter, `agentCode~"${data.agentCode}"`)
+  if (data.customerName) filter += constructQuery(filter, `customerName~"${data.customerName}"`)
+  if (data.createdBy) filter += constructQuery(filter, `createdBy.username~"${data.createdBy}"`)
+  if (data.assignedTo) filter += constructQuery(filter, `assignedTo.username~"${data.assignedTo}"`)
+  if (data.status) filter += constructQuery(filter, `status.name~"${data.status}"`)
+  if (data.created) filter += constructQuery(filter, `created~"${data.created}"`)
+  if (data.updated) filter += constructQuery(filter, `updated~"${data.updated}"`)
+  if (data.isClosed !== undefined) filter += constructQuery(filter, `isClosed=${data.isClosed}`)
+  if (data.closedAt) filter += constructQuery(filter, `closedAt~"${data.closedAt}"`)
+  if (data.conversationId) filter += constructQuery(filter, `conversationId="${data.conversationId}"`)
+  if (data.senderId) filter += constructQuery(filter, `senderId="${data.senderId}"`)
+  if (data.phone) filter += constructQuery(filter, `phone~"${data.phone}"`)
+
+  return filter
 }
 
 export async function useFindTickets(data: FindTickets): Promise<Ticket[]> {
   try {
+    let filter = makeFilter(data)
+
     const { $pb } = useNuxtApp()
-    const resultList = await $pb.collection<TicketResponse>('tickets').getList(1, 0, {
+    const resultList = await $pb.collection<TicketResponse>('tickets').getList(data.page ?? 1, data.limit ?? 100, {
       expand: 'createdBy,assignedTo,status',
       sort: 'created',
+      filter
     })
 
     const tickets = resultList.items.map((data) => {

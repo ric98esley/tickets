@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { StatusCreate } from '~/types';
+
 const statusStore = useStatusStore()
 const route = useRoute()
 const router = useRouter()
@@ -6,9 +8,9 @@ const router = useRouter()
 const toast = useToast()
 
 const filters = reactive({
-  id: route.query.id || undefined,
-  name: route.query.name || undefined,
-  color: route.query.color || undefined,
+  id: route.query.id as string || undefined,
+  name: route.query.name as string || undefined,
+  color: route.query.color as string || undefined,
   limit: Number(route.query.limit) || 10,
   page: Number(route.query.page) || 1
 })

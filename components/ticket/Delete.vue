@@ -13,6 +13,8 @@ const emit = defineEmits({
 
 const deleteModal = ref(false)
 
+const modal = useModal()
+
 const handlerDelete = async () => {
   await useDeleteTicket(props.id)
   deleteModal.value = true
@@ -28,7 +30,7 @@ const handlerDelete = async () => {
       </template>
       <div>
         <div class="flex justify-end space-x-2">
-          <UButton color="gray" @click="deleteModal = false">Cancelar</UButton>
+          <UButton color="gray" @click="modal.close()">Cancelar</UButton>
           <UButton color="red" @click="handlerDelete">Eliminar</UButton>
         </div>
       </div>

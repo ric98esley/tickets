@@ -63,9 +63,31 @@ export interface TicketUpdate {
   assignedTo?: string;
   status?: string;
   content?: string;
+  closedAt?: Date;
 }
 
 export interface TicketResolve {
   content: string
 }
+
+export interface FindTickets {
+  id?: string
+  page?: number
+  limit?: number
+  sort?: string
+  customerName?: string
+  phone?: string
+  createdBy?: string
+  assignedTo?: string
+  status?: string
+  agentCode?: string
+  conversationId?: number
+  senderId?: number
+  isClosed?: boolean
+  closedAt?: Date
+  created?: Date
+  updated?: Date
+}
+
+export type FindTicketsKeys = keyof FindTickets
 

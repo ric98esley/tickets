@@ -40,7 +40,7 @@ const updateTicket = async (data: TicketCreate) => {
     })
   }
 
-  modals.resolve = false
+  modals.update = false
   return ticket
 }
 
@@ -51,7 +51,7 @@ const resolveTicket = async (data: TicketResolve) => {
     return
   }
   if (!ticketToEdit.value.id) return
-  const ticket = await useUpdateTicket(ticketToEdit.value.id, { isClosed: true })
+  const ticket = await useUpdateTicket(ticketToEdit.value.id, { isClosed: true, closedAt: new Date() })
   if (data.content && data.content !== "<p></p>" && ticket?.id) {
     await useCreateThread({
       ticket: ticket.id,
@@ -59,7 +59,7 @@ const resolveTicket = async (data: TicketResolve) => {
     })
   }
 
-  modals.update = false
+  modals.resolve = false
   return ticket
 }
 
@@ -76,7 +76,7 @@ const items = [[{
     modals.resolve = true
   }
 }], [{
-  label: 'Delete',
+  label: 'Borrar',
   icon: 'i-heroicons-trash-20-solid',
   click: () => {
     modal.open(TicketDelete, {

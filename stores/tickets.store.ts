@@ -1,4 +1,4 @@
-import type { Ticket } from "~/types";
+import type { FindTickets, Ticket } from "~/types";
 
 
 export const useTicketsStore = defineStore('List tickets', () => {
@@ -35,17 +35,25 @@ export const useTicketsStore = defineStore('List tickets', () => {
 
   function realtimeTicketHandlers() {
     subscribeTickets((ticket, action) => {
-      if (action === 'create' || action === 'update') {
+      if (action === 'create') {
+        total.value++
         addTicket(ticket)
       }
-      else if (action === 'delete') {
+      if (action === 'update') {
+        if (ticket.isClosed) {
+          removeTicket(ticket)
+          return
+        }
+        addTicket(ticket)
+      }
+      if (action === 'delete') {
         removeTicket(ticket)
       }
     })
   }
 
-  async function fetchTickets() {
-    return await useFindTickets({})
+  async function fetchTickets(data: FindTickets) {
+    return await useFindTickets(data)
   }
   return {
     tickets,

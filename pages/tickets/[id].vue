@@ -1,10 +1,19 @@
 <script setup lang="ts">
-import type { Thread, Ticket } from '~/types';
+import { TicketDelete } from '#components';
+import type { Thread, Ticket, TicketCreate, TicketResolve } from "~/types";
+
 
 const route = useRoute()
 const router = useRouter()
 
 const container: Ref<HTMLElement | null> = ref(null);
+
+const modal = useModal()
+
+const modals = reactive({
+  update: false,
+  resolve: false,
+})
 
 const items = [{
   slot: 'ticket',
@@ -15,6 +24,21 @@ const items = [{
 }]
 
 const ticket = ref<Ticket | null>(null)
+
+const ticketToEdit = computed<TicketCreate>(() => {
+  return {
+    id: ticket.value?.id ?? '',
+    customerName: ticket.value?.customerName ?? '',
+    phone: ticket.value?.phone ?? '',
+    assignedTo: ticket.value?.assignedTo?.id ?? '',
+    status: ticket.value?.status?.id ?? '',
+    agentCode: ticket.value?.agentCode ?? '',
+    conversationId: ticket.value?.conversationId ?? 0,
+    senderId: ticket.value?.senderId ?? 0,
+    content: '',
+  }
+}
+)
 
 const descriptionItems = ref<DescriptionItem[]>([])
 
@@ -98,8 +122,60 @@ async function onSubmit() {
   }
 }
 
+const itemsDrop = [[{
+  label: 'Editar',
+  icon: 'i-heroicons-pencil-square-20-solid',
+  click: () => {
+    modals.update = true
+  }
+}, {
+  label: 'Resolver',
+  icon: 'i-heroicons-document-duplicate-20-solid',
+  click: () => {
+    modals.resolve = true
+  }
+}],
+]
+
+const updateTicket = async (data: TicketCreate) => {
+  if (!ticketToEdit.value.id) return
+  const ticket = await useUpdateTicket(ticketToEdit.value.id, data)
+  if (data.content && data.content !== "<p></p>" && ticket?.id) {
+    const thread = await useCreateThread({
+      ticket: ticket.id,
+      content: data.content,
+    })
+  }
+
+  getTicket()
+
+  modals.update = false
+  return ticket
+}
+
+const resolveTicket = async (data: TicketResolve) => {
+  if (!data.content) {
+    const toast = useToast()
+    toast.add({ color: 'red', title: 'El contenido es requerido' })
+    return
+  }
+  if (!ticketToEdit.value.id) return
+  const ticket = await useUpdateTicket(ticketToEdit.value.id, { isClosed: true, closedAt: new Date() })
+  if (data.content && data.content !== "<p></p>" && ticket?.id) {
+    await useCreateThread({
+      ticket: ticket.id,
+      content: data.content,
+    })
+  }
+
+  getTicket()
+
+  modals.resolve = false
+  return ticket
+}
+
 watch(() => threads.value, async () => {
-  await nextTick(); // Asegúrate de que la actualización del DOM se complete
+  await nextTick(); // wait for the DOM to update
   if (container.value) {
     container.value.scrollTop = container.value.scrollHeight;
   }
@@ -124,20 +200,28 @@ onMounted(() => {
           </div>
           <UCard>
             <template #header>
-              <div class="flex items justify-between">
-                <p>{{ ticket.agentCode }}</p>
-                <div class="flex flex-col sm:flex-row justify-end gap-2">
-                  <UButton icon="i-heroicons-chat-bubble-left-right-solid" :ui="{ rounded: 'rounded-full' }"
-                    @click="navigateTo(`https://wa.me/${ticket.phone}`, { external: true, open: { target: '_blank' } })"
-                    label="WhatsApp" />
-                  <UButton icon="i-heroicons-chat-bubble-oval-left-solid" :ui="{ rounded: 'rounded-full' }"
-                    @click="navigateTo(`https://crm.gana-loterias.com/app/accounts/1/conversations/${ticket.conversationId}`, { external: true, open: { target: '_blank' } })"
-                    label="Chat" />
+              <div class="flex items items-center justify-between">
+                <p class="text-xl ">{{ ticket.agentCode }}</p>
+                <div class="flex">
+                  <div class="flex flex-col  sm:flex-row justify-end gap-2">
+                    <UButton icon="i-heroicons-chat-bubble-left-right-solid" :ui="{ rounded: 'rounded-full' }"
+                      @click="navigateTo(`https://wa.me/${ticket.phone}`, { external: true, open: { target: '_blank' } })"
+                      label="WhatsApp" />
+                    <UButton icon="i-heroicons-chat-bubble-oval-left-solid" :ui="{ rounded: 'rounded-full' }"
+                      @click="navigateTo(`https://crm.gana-loterias.com/app/accounts/1/conversations/${ticket.conversationId}`, { external: true, open: { target: '_blank' } })"
+                      label="Chat" />
+                  </div>
+                  <UDropdown :items="itemsDrop" class="self-start" :popper="{ placement: 'bottom-start' }">
+                    <UButton icon="i-heroicons-ellipsis-vertical-16-solid" size="sm" color="primary" variant="link"
+                      :trailing="false" />
+                  </UDropdown>
                 </div>
               </div>
             </template>
             <template #default>
-              <Description :data="descriptionItems" />
+              <div ref="container" class="flex flex-col gap-2 h-[60svh] overflow-y-scroll">
+                <Description :data="descriptionItems" />
+              </div>
             </template>
           </UCard>
         </div>
@@ -163,5 +247,29 @@ onMounted(() => {
         </UCard>
       </template>
     </UTabs>
+
+    <!-- modals -->
+    <UModal v-model="modals.update" title="Editar Ticket" prevent-close>
+      <UCard>
+        <template #header>
+          <div class="text-lg font-semibold flex justify-between">
+            <h2>Editar ticket</h2>
+            <UButton @click="modals.update = false" icon="i-heroicons-x-mark-16-solid" variant="link" />
+          </div>
+        </template>
+        <TicketForm v-if="ticket" :form="ticketToEdit" @submit="updateTicket" />
+      </UCard>
+    </UModal>
+    <UModal v-model="modals.resolve" title="Resolver ticket" prevent-close>
+      <UCard>
+        <template #header>
+          <div class="text-lg font-semibold flex justify-between">
+            <h2>Resolver ticket</h2>
+            <UButton @click="modals.resolve = false" icon="i-heroicons-x-mark-16-solid" variant="link" />
+          </div>
+        </template>
+        <TicketResolve :form="ticketToEdit" @submit="resolveTicket" />
+      </UCard>
+    </UModal>
   </div>
 </template>

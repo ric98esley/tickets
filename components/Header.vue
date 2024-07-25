@@ -43,7 +43,12 @@ const links = reactive([{
   icon: 'i-heroicons-queue-list-16-solid',
   to: `/status`,
   click: () => isOpen.value = false
-}, {
+},{
+  label: 'Tickets',
+  icon: 'i-heroicons-ticket-solid',
+  to: '/tickets',
+},
+{
   label: 'rutas',
   icon: 'i-heroicons-truck-solid',
   to: '/rutas',
@@ -79,7 +84,7 @@ const items = [
       <UHorizontalNavigation :links="links" class="hidden md:flex" />
       <div class="flex content-center pr-4">
         <UButton :icon="isDark ? 'i-heroicons-moon-20-solid' : 'i-heroicons-sun-20-solid'" color="gray" variant="ghost"
-        aria-label="Theme" @click="isDark = !isDark" />
+          aria-label="Theme" @click="isDark = !isDark" />
         <UDropdown :items="items" :popper="{ placement: 'bottom-start' }">
           <UButton size="md" square variant="ghost" trailing-icon="i-heroicons-cog-6-tooth" />
         </UDropdown>

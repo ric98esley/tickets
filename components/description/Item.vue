@@ -20,7 +20,7 @@ const props = defineProps({
     <div v-if="props.icon" class="basis-1/8 m-2">
       <UIcon :name="props.icon" />
     </div>
-    <div class="basis-1/4 font-bold m-2">
+    <div class="basis-1/2 font-bold m-2">
       {{ props.title }}
     </div>
     <div class="basis-1/16 font-bold m-2">

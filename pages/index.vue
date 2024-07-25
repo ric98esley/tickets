@@ -5,7 +5,9 @@ const ticketsStore = useTicketsStore()
 const unsubscribe = ticketsStore.realtimeTicketHandlers()
 
 onMounted(async () => {
-  const tickets = await ticketsStore.fetchTickets()
+  const tickets = await ticketsStore.fetchTickets({
+    isClosed: false,
+  })
   ticketsStore.addTickets(tickets)
 })
 
