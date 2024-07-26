@@ -35,12 +35,11 @@ const getTickets = async (data: FindTickets) => {
   tickets.total = total
 }
 
-
 watch(filters, async (data) => {
   const query = { ...data }
 
   router.push({
-    path: '/tickets/mine',
+    path: '/mine/tickets',
     query //always isClosed will be a string ignore the type
   })
   await getTickets(data)

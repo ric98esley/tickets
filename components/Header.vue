@@ -73,7 +73,7 @@ const items = [
     label: 'Mis tickets',
     icon: 'i-heroicons-pencil-square-20-solid',
     click: () => {
-      navigateTo(`/tickets/mine`)
+      navigateTo(`/mine/tickets`)
     }
   }], [{
     label: 'Salir',

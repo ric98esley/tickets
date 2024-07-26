@@ -17,7 +17,7 @@ export const useFindUser = async (data: UserFind) : Promise<FindUsers>=> {
     constructQuery(filter, `email~"${data.email}"`)
     constructQuery(filter, `role.name~"${data.role}"`)
 
-    const resultList = await $pb.collection<UserResponse>('users').getList(1, 0, {
+    const resultList = await $pb.collection<UserResponse>('users').getList(data.page ?? 1, data.limit ?? 100 , {
       expand: 'role',
       sort: 'created',
       filter
