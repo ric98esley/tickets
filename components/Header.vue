@@ -3,11 +3,9 @@ const userStore = useUserStore()
 const { $pb } = useNuxtApp()
 const router = useRouter()
 
-
 const colorMode = useColorMode()
 
 const username = ref(userStore.user?.name)
-const userAvatar = ref(userStore.user?.avatar)
 
 const isOpen = ref(false)
 
@@ -29,9 +27,8 @@ const isDark = computed({
 const links = reactive([{
   label: username.value ?? 'Usuario',
   avatar: {
-    src: userAvatar.value ?? 'https://i.pravatar.cc/150?img=68',
+    src: `https://avatar.iran.liara.run/username?username=${username.value}&size=64`,
   },
-  badge: 100,
   click: () => isOpen.value = false
 }, {
   label: 'Nuevos',
@@ -67,7 +64,7 @@ const items = [
   [{
     label: 'Perfil',
     avatar: {
-      src: userAvatar.value ?? 'https://i.pravatar.cc/150?img=68',
+      src: `https://avatar.iran.liara.run/username?username=${username.value}&size=64`,
     }
   }], [{
     label: 'Mis tickets',
