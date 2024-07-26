@@ -1,3 +1,28 @@
+export interface Ability {
+  id:       string;
+  name:     string;
+  created:  Date;
+  updated:  Date;
+}
+
+export interface RoleResponse {
+  id:       string;
+  name:     string;
+  created:  Date;
+  updated:  Date;
+  expand?: {
+    abilities: Ability[]
+  }
+}
+
+export interface Role {
+  id:       string;
+  name:     string;
+  created:  Date;
+  updated:  Date;
+  abilities?: Ability[]
+}
+
 export interface UserResponse {
   id:              string;
   name:            string;
@@ -11,12 +36,15 @@ export interface UserResponse {
   updated:         Date;
   username:        string;
   verified:        boolean;
+  expand?: {
+    role: RoleResponse
+  }
 }
 export interface User {
   id:              string;
   username:        string;
   name:            string;
-  role:            string;
+  role?:            Role;
   avatar:          string;
   email:           string;
   verified:        boolean;

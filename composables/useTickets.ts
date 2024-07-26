@@ -3,20 +3,20 @@ import { ticketEntityMapper } from "~/utils/ticket-map"
 
 function makeFilter(data: FindTickets): string {
   let filter = ''
-  if (data.id) filter += constructQuery(filter, `id~"${data.id}"`)
-  if (data.agentCode) filter += constructQuery(filter, `agentCode~"${data.agentCode}"`)
-  if (data.customerName) filter += constructQuery(filter, `customerName~"${data.customerName}"`)
-  if (data.createdBy) filter += constructQuery(filter, `createdBy.username~"${data.createdBy}"`)
-  if (data.assignedTo) filter += constructQuery(filter, `assignedTo.username~"${data.assignedTo}"`)
-  if (data.status) filter += constructQuery(filter, `status.name~"${data.status}"`)
-  if (data.createdStart) filter += constructQuery(filter, `created>"${dateForFilterFormatted(data.createdStart)}"`)
-  if (data.createdEnd) filter += constructQuery(filter, `created<"${dateForFilterFormatted(data.createdEnd)}"`)
-  if (data.isClosed !== undefined) filter += constructQuery(filter, `isClosed=${data.isClosed}`)
-  if (data.closedAtStart) filter += constructQuery(filter, `closedAt>"${dateForFilterFormatted(data.closedAtStart)}"`)
-  if (data.closedAtEnd) filter += constructQuery(filter, `closedAt<"${dateForFilterFormatted(data.closedAtEnd)}"`)
-  if (data.conversationId) filter += constructQuery(filter, `conversationId="${data.conversationId}"`)
-  if (data.senderId) filter += constructQuery(filter, `senderId="${data.senderId}"`)
-  if (data.phone) filter += constructQuery(filter, `phone~"${data.phone}"`)
+  if (data.id) filter = constructQuery(filter, `id~"${data.id}"`)
+  if (data.agentCode) filter = constructQuery(filter, `agentCode~"${data.agentCode}"`)
+  if (data.customerName) filter = constructQuery(filter, `customerName~"${data.customerName}"`)
+  if (data.createdBy) filter = constructQuery(filter, `createdBy.username~"${data.createdBy}"`)
+  if (data.assignedTo) filter = constructQuery(filter, `assignedTo.username~"${data.assignedTo}"`)
+  if (data.status) filter = constructQuery(filter, `status.name~"${data.status}"`)
+  if (data.createdStart) filter = constructQuery(filter, `created>"${dateForFilterFormatted(data.createdStart)}"`)
+  if (data.createdEnd) filter = constructQuery(filter, `created<"${dateForFilterFormatted(data.createdEnd)}"`)
+  if (data.isClosed !== undefined) filter = constructQuery(filter, `isClosed=${data.isClosed}`)
+  if (data.closedAtStart) filter = constructQuery(filter, `closedAt>"${dateForFilterFormatted(data.closedAtStart)}"`)
+  if (data.closedAtEnd) filter = constructQuery(filter, `closedAt<"${dateForFilterFormatted(data.closedAtEnd)}"`)
+  if (data.conversationId) filter = constructQuery(filter, `conversationId="${data.conversationId}"`)
+  if (data.senderId) filter = constructQuery(filter, `senderId="${data.senderId}"`)
+  if (data.phone) filter = constructQuery(filter, `phone~"${data.phone}"`)
 
   return filter
 }
@@ -24,6 +24,35 @@ function makeFilter(data: FindTickets): string {
 export async function useFindTickets(data: FindTickets): Promise<{ total: number, rows: Ticket[] }> {
   try {
     let filter = makeFilter(data)
+
+    const { $pb } = useNuxtApp()
+    const resultList = await $pb.collection<TicketResponse>('tickets').getList(data.page ?? 1, data.limit ?? 100, {
+      expand: 'createdBy,assignedTo,status',
+      sort: '-created',
+      filter
+    })
+
+    const tickets = resultList.items.map((data) => {
+      return ticketEntityMapper(data)
+    }) ?? []
+
+    return {
+      total: resultList.totalItems,
+      rows: tickets
+    }
+  } catch (error) {
+    console.log(error)
+    return {
+      total: 0,
+      rows: []
+    }
+  }
+}
+
+export async function useFindTicketsByAssignedTo(assignedTo: string ,data: FindTickets): Promise<{ total: number, rows: Ticket[] }> {
+  try {
+    let filter = makeFilter(data)
+    filter = constructQuery(filter, `assignedTo="${assignedTo}"`)
 
     const { $pb } = useNuxtApp()
     const resultList = await $pb.collection<TicketResponse>('tickets').getList(data.page ?? 1, data.limit ?? 100, {

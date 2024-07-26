@@ -40,14 +40,14 @@ export const useTicketsStore = defineStore('List tickets', () => {
         addTicket(ticket)
       }
       if (action === 'update') {
-        if (ticket.isClosed) {
-          removeTicket(ticket)
-          return
-        }
         addTicket(ticket)
       }
       if (action === 'delete') {
         removeTicket(ticket)
+      }
+      if (ticket.isClosed) {
+        removeTicket(ticket)
+        return
       }
     })
   }

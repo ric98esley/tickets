@@ -47,13 +47,21 @@ const links = reactive([{
   label: 'Tickets',
   icon: 'i-heroicons-ticket-solid',
   to: '/tickets',
+  click: () => isOpen.value = false
 },
 {
   label: 'rutas',
   icon: 'i-heroicons-truck-solid',
   to: '/rutas',
   click: () => isOpen.value = false
-}])
+},
+{
+  label: 'Usuarios',
+  icon: 'i-heroicons-users-solid',
+  to: '/usuarios',
+  click: () => isOpen.value = false
+}
+])
 
 const items = [
   [{
@@ -65,7 +73,7 @@ const items = [
     label: 'Mis tickets',
     icon: 'i-heroicons-pencil-square-20-solid',
     click: () => {
-      console.log('Edit')
+      navigateTo(`/tickets/mine`)
     }
   }], [{
     label: 'Salir',
