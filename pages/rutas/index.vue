@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Route, RouteFind } from '~/types';
+import type { Route, RouteCreate, RouteFind } from '~/types';
 
 const route = useRoute()
 
@@ -7,18 +7,18 @@ const modals = reactive({
   add: false
 })
 
-const filters = reactive <RouteFind> ({
+const filters = reactive<RouteFind>({
   id: route.query.id as string || undefined,
   name: route.query.name as string || undefined,
-  limit: Number(route.query.limit)  || 10,
+  limit: Number(route.query.limit) || 10,
   page: Number(route.query.page) || 1
 })
 
 
-const routes = reactive < {
+const routes = reactive<{
   rows: Route[],
   total: number
-} > ({
+}>({
   rows: [],
   total: 0
 })
@@ -27,8 +27,16 @@ const getRoutes = async (page = 1) => {
   const data = await useFindRoutes()
   routes.rows = data.rows
   routes.total = data.total
+}
 
-  console.log(data.rows)
+const handlerSubmit = async (data: RouteCreate) => {
+  const response = await useCreateRoute(data)
+  if (!response) return
+  for (const ticket of data.tickets) {
+    await useUpdateTicket(ticket.id, { route: response.id })
+  }
+
+  await getRoutes()
 }
 
 onMounted(async () => {
@@ -48,5 +56,15 @@ onMounted(async () => {
       </template>
       <RoutesTable :data="routes.rows" :total="routes.total" :filters="filters" />
     </UCard>
+    <UModal v-model="modals.add" @close="modals.add = false">
+      <UCard>
+        <template #header>
+          <h1 class="text-2xl font-bold">Nueva Ruta</h1>
+        </template>
+        <template #default>
+          <RoutesSave @submit="handlerSubmit" />
+        </template>
+      </UCard>
+    </UModal>
   </UContainer>
 </template>

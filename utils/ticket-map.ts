@@ -5,10 +5,12 @@ export const ticketEntityMapper = (data: TicketResponse): Ticket => {
   let createdBy = undefined
   let assignedTo = undefined
   let status = undefined
+  let thread = undefined
 
   if (data.expand.createdBy) createdBy = userMapper(data.expand.createdBy)
   if (data.expand.assignedTo) assignedTo = userMapper(data.expand.assignedTo)
   if (data.expand.status) status = statusMapper(data.expand.status)
+  if (data.expand.thread) thread = threadEntityMapper(data.expand.thread)
 
   return {
     id: data.id,
@@ -20,6 +22,7 @@ export const ticketEntityMapper = (data: TicketResponse): Ticket => {
     agentCode: data.agentCode,
     conversationId: data.conversationId,
     senderId: data.senderId,
+    thread,
     isClosed: data.isClosed,
     closedAt: data.closedAt,
     timeSince: timeSince(data.created),

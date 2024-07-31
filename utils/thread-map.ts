@@ -4,8 +4,8 @@ export const threadEntityMapper = (data: ThreadResponse): Thread => {
   let createdBy = undefined
   let inResponseTo = undefined
 
-  if (data.expand.createdBy) createdBy = userMapper(data.expand.createdBy)
-  if (data.expand.inResponseTo) inResponseTo = threadEntityMapper(data.expand.inResponseTo)
+  if (data.expand?.createdBy) createdBy = userMapper(data.expand.createdBy)
+  if (data.expand?.inResponseTo) inResponseTo = threadEntityMapper(data.expand.inResponseTo)
 
   return {
     id: data.id,

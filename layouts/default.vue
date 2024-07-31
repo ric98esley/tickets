@@ -16,9 +16,13 @@ const handlerSubmit = async (data: TicketCreate) => {
   const ticket = await useCreateTicket(data)
   if (!ticket) return;
 
-  await useCreateThread({
+  const thread = await useCreateThread({
     ticket: ticket.id,
     content: data.content,
+  })
+
+  await useUpdateTicket(ticket.id, {
+    thread: thread?.id,
   })
 
   toast.add({

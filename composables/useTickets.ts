@@ -27,7 +27,7 @@ export async function useFindTickets(data: FindTickets): Promise<{ total: number
 
     const { $pb } = useNuxtApp()
     const resultList = await $pb.collection<TicketResponse>('tickets').getList(data.page ?? 1, data.limit ?? 100, {
-      expand: 'createdBy,assignedTo,status',
+      expand: 'createdBy,assignedTo,status,thread',
       sort: '-created',
       filter
     })
@@ -56,7 +56,7 @@ export async function useFindTicketsByAssignedTo(assignedTo: string ,data: FindT
 
     const { $pb } = useNuxtApp()
     const resultList = await $pb.collection<TicketResponse>('tickets').getList(data.page ?? 1, data.limit ?? 100, {
-      expand: 'createdBy,assignedTo,status',
+      expand: 'createdBy,assignedTo,status,thread',
       sort: '-created',
       filter
     })
@@ -82,7 +82,7 @@ export async function useFindOneTicket(id: string): Promise<Ticket | null> {
   try {
     const { $pb } = useNuxtApp()
     const ticket = await $pb.collection<TicketResponse>('tickets').getOne(id, {
-      expand: 'createdBy,assignedTo,status',
+      expand: 'createdBy,assignedTo,status,thread',
     })
 
     return ticketEntityMapper(ticket)
@@ -98,11 +98,9 @@ export async function useCreateTicket(data: TicketCreate): Promise<Ticket | null
     const userStore = useUserStore()
     const ticket = await $pb.collection<TicketResponse>('tickets').create({
       ...data,
-      agentCode: data.agentCode,
-      customerName: data.customerName,
       createdBy: userStore.user?.id,
     }, {
-      expand: 'createdBy,assignedTo,status',
+      expand: 'createdBy,assignedTo,status,thread',
     })
 
     return ticketEntityMapper(ticket)
@@ -122,7 +120,7 @@ export async function useUpdateTicket(id: string, data: TicketUpdate): Promise<T
     const { $pb } = useNuxtApp()
     const ticket = await $pb.collection<TicketResponse>('tickets').update(id,
       data, {
-      expand: 'createdBy,assignedTo,status',
+      expand: 'createdBy,assignedTo,status,thread',
     })
 
     return ticketEntityMapper(ticket)
@@ -165,7 +163,7 @@ export async function subscribeTickets(callback: (ticket: Ticket, action: string
     callback(ticketEntityMapper(e.record), e.action)
   },
     {
-      expand: 'createdBy,assignedTo,status',
+      expand: 'createdBy,assignedTo,status,thread',
     }
   )
 }

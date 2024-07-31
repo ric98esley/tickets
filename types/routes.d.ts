@@ -4,7 +4,6 @@ import type { User, UserResponse } from "./user";
 interface Expand {
   createdBy?: UserResponse;
   assignedTo?: UserResponse;
-  tickets?: TicketResponse[];
 }
 
 export interface RouteResponse {
@@ -16,7 +15,6 @@ export interface RouteResponse {
   name: string;
   assignedTo: string;
   createdBy: string;
-  tickets: string[];
   closed: Date;
   started: Date;
   expand?: Expand;
@@ -44,4 +42,11 @@ export interface RouteFind {
   closed?: Date;
   started?: Date;
   created?: Date;
+}
+
+export interface RouteCreate {
+  name: string;
+  assignedTo: string;
+  started: string;
+  tickets: Ticket[];
 }

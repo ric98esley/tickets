@@ -68,7 +68,7 @@ const filters = computed({
 //   emit('refresh')
 // }
 
-const items = (row: Status) => [
+const items = (row: Route) => [
   [{
     label: 'Editar',
     icon: 'i-heroicons-pencil-square-20-solid',
@@ -78,6 +78,7 @@ const items = (row: Status) => [
     label: 'Ver',
     icon: 'i-heroicons-eye-20-solid',
     click: () => {
+      navigateTo(`/rutas/${row.id}`)
     }
   }], [{
     label: 'Terminar',
