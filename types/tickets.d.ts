@@ -63,18 +63,18 @@ export interface TicketCreate {
 }
 
 export interface TicketUpdate {
-  customerName?:   string;
-  phone?:          string;
-  agentCode?:      string;
-  senderId?:       number;
-  conversationId?: number;
-  route?:          string;
-  isClosed?:       boolean;
-  assignedTo?:     string;
-  status?:         string;
-  thread?:         string;
-  content?:        string;
-  closedAt?:       Date;
+  customerName?:   string | null;
+  phone?:          string | null;
+  agentCode?:      string | null;
+  senderId?:       number | null;
+  conversationId?: number | null;
+  route?:          string | null;
+  isClosed?:       boolean | null;
+  assignedTo?:     string | null;
+  status?:         string | null;
+  thread?:         string | null;
+  content?:        string | null;
+  closedAt?:       Date | null;
 }
 
 export interface TicketResolve {

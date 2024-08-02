@@ -61,7 +61,7 @@ const submit = (event: FormSubmitEvent<any>) => {
       <UInput type="date" v-model="form.started" />
     </UFormGroup>
     <UFormGroup label="Tickets" name="tickets">
-      <TicketSelect v-model="form.tickets" />
+      <TicketSelect v-model="form.tickets" :filter-by="(value) => value.route == undefined"/>
     </UFormGroup>
     <UButton type="submit">
       Guardar

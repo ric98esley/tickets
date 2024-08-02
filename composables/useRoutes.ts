@@ -19,6 +19,21 @@ export const useFindRoutes = async (): Promise<{ total: number, rows: Route[] }>
   }
 };
 
+export const useFindOneRoute = async (id: string): Promise<Route | undefined> => {
+  try {
+    const { $pb } = useNuxtApp();
+    const route = await $pb.collection<RouteResponse>('routes').getOne(id, {
+      expand: 'assignedTo,createdBy'
+    });
+
+    return routeMapper(route);
+
+  } catch (error) {
+    console.error(error);
+    return undefined;
+  }
+}
+
 export const useCreateRoute = async (data: RouteCreate): Promise<Route | null> => {
   const toast = useToast();
   try {

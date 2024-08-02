@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Route, RouteFind, Status, StatusCreate } from '~/types';
+import type { Route, RouteFind } from '~/types';
 
 const statusStore = useStatusStore()
 
@@ -32,6 +32,18 @@ const columns = [{
 }, {
   key: 'assignedTo.name',
   label: 'Asignado a'
+},
+{
+  key: 'started',
+  label: 'Inicio'
+},
+{
+  key: 'closed',
+  label: 'Fin'
+},
+{
+  key: 'created',
+  label: 'Creado'
 },
 {
   key: 'actions',
@@ -74,7 +86,7 @@ const items = (row: Route) => [
     icon: 'i-heroicons-pencil-square-20-solid',
     click: () => {
     }
-  },{
+  }, {
     label: 'Ver',
     icon: 'i-heroicons-eye-20-solid',
     click: () => {
@@ -104,6 +116,15 @@ const items = (row: Route) => [
         <UBadge size="sm" :style="{ ['background-color']: row.color }">
           {{ row.color }}
         </UBadge>
+      </template>
+      <template #created-data="{ row }">
+        {{ dateFormattedWithTime(row.created) }}
+      </template>
+      <template #started-data="{ row }">
+        {{ row.started ? dateFormatted(row.started) : 'No iniciado' }}
+      </template>
+      <template #closed-data="{ row }">
+        {{ row.closed ? dateFormatted(row.closed) : 'No finalizado' }}
       </template>
       <template #actions-data="{ row }">
         <UDropdown :items="items(row)">

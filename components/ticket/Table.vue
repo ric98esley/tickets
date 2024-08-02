@@ -20,13 +20,17 @@ const props = defineProps({
       status: String,
     })
   },
+  selected: {
+    type: Array as PropType<Ticket[]>,
+    default: () => []
+  },
   total: {
     type: Number,
     default: 0
   },
 })
 
-const emit = defineEmits(["update:filters", "update:page", "update:form", "refresh"])
+const emit = defineEmits(["update:filters", "update:page", "update:form", "refresh", "update:selected"])
 
 const filters = computed({
   get: () => props.filters,
@@ -38,7 +42,7 @@ const columns = [{
   label: 'ID',
 }, {
   key: 'agentCode',
-  label: 'Código Agente'
+  label: 'Código Agencia'
 }, {
   key: 'customerName',
   label: 'Nombre Cliente'
@@ -67,6 +71,10 @@ const columns = [{
 
 const selectedColumns = ref([...columns])
 
+const selected = ref<Ticket[]>([])
+
+const action = ref<any>(undefined)
+
 const updateTicket = async (id: string, data: TicketCreate) => {
   if (!id) return
   const ticket = await useUpdateTicket(id, data)
@@ -78,6 +86,14 @@ const updateTicket = async (id: string, data: TicketCreate) => {
   }
 
   modal.close()
+  emit('refresh')
+  return ticket
+}
+
+const unassigned = async (row: Ticket) => {
+  if (!row.id) return
+  console.log(row)
+  const ticket = await useUpdateTicket(row.id, { route: null })
   emit('refresh')
   return ticket
 }
@@ -102,6 +118,32 @@ const resolveTicket = async (id: string, data: TicketResolve) => {
   return ticket
 }
 
+const applyAction = async () => {
+  if (!action.value) return
+  if (action.value === 'unassigned') {
+    await Promise.all(selected.value.map(async (row) => await unassigned(row)))
+    emit('refresh')
+    action.value = undefined
+    selected.value = []
+  }
+  if (action.value === 'resolve') {
+    modal.open(TicketModalResolve, {
+      onSubmit: async (form) => {
+        await Promise.all(selected.value.map(async (row) => await resolveTicket(row.id, form)))
+        emit('refresh')
+        action.value = undefined
+        selected.value = []
+      }
+    })
+  }
+  if (action.value === 'delete') {
+    await Promise.all(selected.value.map(async (row) => await useDeleteTicket(row.id)))
+    emit('refresh')
+    action.value = undefined
+    selected.value = []
+  }
+}
+
 const items = (row: Ticket) => [
   [{
     label: 'Editar',
@@ -121,6 +163,14 @@ const items = (row: Ticket) => [
       })
     }
   }], [
+    {
+      label: 'Quitar',
+      icon: 'i-heroicons-arrow-uturn-right-16-solid',
+      click: async () => {
+        await unassigned(row)
+      }
+    }
+  ], [
     {
       label: 'Ver',
       icon: 'i-heroicons-eye-20-solid',
@@ -145,20 +195,34 @@ const resolve = [
   { label: 'Resuelto', value: true },
   { label: 'Pendiente', value: false },
 ]
+
+const actions = [
+  { label: 'Quitar', value: 'unassigned' },
+  { label: 'Resolver', value: 'resolve' },
+  { label: 'Borrar', value: 'delete' },
+]
 </script>
 
 <template>
   <UContainer>
-    <div class="flex justify-end px-3 py-3.5 border-b border-gray-200 dark:border-gray-700">
-      <USelectMenu v-model="selectedColumns" :options="columns" multiple placeholder="Columnas" label="Selecciona">
-        <template #label>
-          <span class="truncate">{{ selectedColumns.length }}</span>
-          <span>Columnas</span>
-        </template>
-      </USelectMenu>
-      <UButton variant="ghost" icon="i-heroicons-arrow-path-rounded-square-20-solid" label="Refrescar" @click="emit('refresh')" />
+    <div
+      class="flex flex-col justify-end content-end md:flex-row md:justify-between px-0 py-3.5 border-b border-gray-200 dark:border-gray-700">
+      <div class="flex pb-4">
+        <USelect v-model="action" class="mr-4" :options="actions" option-attribute="label" />
+        <UButton label="Aplicar" @click="applyAction" />
+      </div>
+      <div class="flex pb-4">
+        <USelectMenu v-model="selectedColumns" :options="columns" multiple placeholder="Columnas" label="Selecciona">
+          <template #label>
+            <span class="truncate">{{ selectedColumns.length }}</span>
+            <span>Columnas</span>
+          </template>
+        </USelectMenu>
+        <UButton variant="ghost" icon="i-heroicons-arrow-path-rounded-square-20-solid" label="Refrescar"
+          @click="emit('refresh')" />
+      </div>
     </div>
-    <UTable :rows="props.data" :columns="selectedColumns">
+    <UTable :rows="props.data" v-model="selected" :columns="selectedColumns">
       <template #id-header>
         <UInput v-model="filters.id" placeholder="ID" class="w-36" />
       </template>
@@ -181,7 +245,7 @@ const resolve = [
         <a class="text-primary" :href="'tel:' + row.phone">{{ row.phone }}</a>
       </template>
       <template #closedAt-data="{ row }">
-        {{ row.closedAt ? dateFormattedWithTime(row.closedAt): 'No resuelto' }}
+        {{ row.closedAt ? dateFormattedWithTime(row.closedAt) : 'No resuelto' }}
       </template>
       <template #isClosed-header>
         <USelectMenu v-model="filters.isClosed" :options="resolve" placeholder="Resuelto" valueAttribute="value" />

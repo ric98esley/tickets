@@ -196,8 +196,6 @@ onMounted(() => {
     <UTabs v-model="selected" :items="items">
       <template #ticket="{ item }">
         <div v-if="ticket">
-          <div class="flex">
-          </div>
           <UCard>
             <template #header>
               <div class="flex items items-center justify-between">

@@ -6,6 +6,10 @@ const props = defineProps({
     type: Array as () => Ticket[],
     required: true,
   },
+  filterBy: {
+    type: Function as unknown as () => (value: Ticket) => boolean,
+    default: async (value: Ticket) => true,
+  }
 })
 
 const emit = defineEmits(['update:modelValue'])
@@ -17,9 +21,10 @@ const loading = ref(false)
 
 const searchTickets = async (query: string) => {
   loading.value = true
-  const statuses = await useFindTickets({ agentCode: query })
+  const tickets = await useFindTickets({ agentCode: query })
+  
   loading.value = false
-  return statuses.rows
+  return tickets.rows.filter(props.filterBy)
 }
 
 watch(selected, (value) => {
@@ -30,7 +35,7 @@ watch(selected, (value) => {
 
 onMounted(async () => {
   if (props.modelValue) {
-    const tickets = await useFindTickets({ limit: 200, isClosed: false })
+    const tickets = await useFindTickets({ limit: 200, isClosed: false})
     selected.value = tickets.rows
   }
 })
