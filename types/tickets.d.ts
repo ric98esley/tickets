@@ -1,3 +1,4 @@
+import type { Department, DepartmentResponse } from "./department";
 import type { Route, RouteResponse } from "./routes";
 import type { Status, StatusResponse } from "./status";
 import type { Thread, ThreadResponse } from "./thread";
@@ -7,21 +8,22 @@ interface Expand {
   assignedTo: UserResponse;
   createdBy:  UserResponse;
   status:     StatusResponse;
-  thread:     ThreadResponse;
   route:     RouteResponse;
+  department: DepartmentResponse;
 }
 export interface TicketResponse {
-  id:              string;
-  created:         Date;
-  updated:         Date;
+  id:             string;
+  created:        Date;
+  updated:        Date;
   customerName:   string;
-  phone:           string;
+  phone:          string;
   createdBy:      string;
   assignedTo:     string;
-  status:          string;
+  status:         string;
   agentCode:      string;
   conversationId: number;
   senderId:       number;
+  content:        string;
   route:          string;
   isClosed:       boolean;
   closedAt:       Date;
@@ -37,6 +39,8 @@ export interface Ticket {
   phone:          string;
   createdBy?:     User;
   assignedTo?:    User;
+  department?:    Department;
+  content:        string;
   status?:        Status;
   agentCode:      string;
   isClosed:       boolean;
@@ -55,6 +59,7 @@ export interface TicketCreate {
   agentCode:      string;
   senderId?:      number;
   route?:         string;
+  department?:    string;
   conversationId?:number;
   isClosed?:      boolean;
   assignedTo?:    string;
@@ -69,10 +74,10 @@ export interface TicketUpdate {
   senderId?:       number | null;
   conversationId?: number | null;
   route?:          string | null;
+  department?:     string | null;
   isClosed?:       boolean | null;
   assignedTo?:     string | null;
   status?:         string | null;
-  thread?:         string | null;
   content?:        string | null;
   closedAt?:       Date | null;
 }
@@ -82,24 +87,26 @@ export interface TicketResolve {
 }
 
 export interface FindTickets {
-  id?: string
-  page?: number
-  limit?: number
-  sort?: string
-  customerName?: string
-  phone?: string
-  email?: string
-  createdBy?: string
-  assignedTo?: string
-  status?: string
-  agentCode?: string
-  conversationId?: number
-  senderId?: number
-  isClosed?: boolean | string
-  closedAtStart?: string
-  closedAtEnd?: string
-  createdStart?: Date
-  createdEnd?: Date
+  id?:             string;
+  page?:           number;
+  limit?:          number;
+  sort?:           string;
+  customerName?:   string;
+  phone?:          string;
+  email?:          string;
+  createdBy?:      string;
+  assignedTo?:     string;
+  department?:     string;
+  content?:        string;
+  status?:         string;
+  agentCode?:      string;
+  conversationId?: number;
+  senderId?:       number;
+  isClosed?:       boolean | string;
+  closedAtStart?:  string;
+  closedAtEnd?:    string;
+  createdStart?:   Date;
+  createdEnd?:     Date;
 }
 
 export type FindTicketsKeys = keyof FindTickets

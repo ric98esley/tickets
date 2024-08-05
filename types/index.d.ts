@@ -8,6 +8,8 @@ export { Status, StatusResponse, StatusCreate, StatusDelete, StatusFind, StatusU
 export { ThreadResponse, Thread, CreateThread} from './thread.d.ts'
 
 export { Route, RouteResponse, RouteFind, RouteCreate, RouteUpdate } from './routes.d.ts'
+
+export { DepartmentResponse, Department, DepartmentCreate, DepartmentUpdate, FindDepartment } from './department.d.ts'
 declare global {
   interface DescriptionItem {
     icon: string
