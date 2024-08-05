@@ -52,7 +52,10 @@ const columns = [{
 }, {
   key: 'status.name',
   label: 'Estatus'
-}, {
+},{
+  key: 'content',
+  label: 'Contenido'
+},{
   key: 'assignedTo.name',
   label: 'Asignado a'
 }, {
@@ -243,6 +246,12 @@ const actions = [
       </template>
       <template #phone-data="{ row }">
         <a class="text-primary" :href="'tel:' + row.phone">{{ row.phone }}</a>
+      </template>
+      <template #content-header>
+        <UInput v-model="filters.content" placeholder="Contenido" class="w-36" />
+      </template>
+      <template #content-data="{ row }">
+        <div v-html="row.content" />
       </template>
       <template #closedAt-data="{ row }">
         {{ row.closedAt ? dateFormattedWithTime(row.closedAt) : 'No resuelto' }}

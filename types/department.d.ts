@@ -24,7 +24,7 @@ export interface DepartmentUpdate {
 
 export interface FindDepartment {
   limit?:          number;
-  offset?:         number;
+  page?:         number;
   name?:          string;
 }
 

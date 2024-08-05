@@ -5,7 +5,7 @@ import type { TicketCreate } from '~/types';
 const props = defineProps({
   form: {
     type: Object as PropType<TicketCreate>,
-    default: () => ({ customerName: '', phone: '', assignedTo: '', status: '', agentCode: '', conversationId: undefined, senderId: undefined, content: '' })
+    default: () => ({ customerName: '', phone: '', assignedTo: '', status: '', agentCode: '', department: '', conversationId: undefined, senderId: undefined, content: '' })
   }
 })
 
@@ -29,6 +29,10 @@ const validate = (state: TicketCreate): FormError[] => {
   }
   if (!state.status) {
     errors.push({ path: 'status', message: 'El status es requerido' })
+  }
+
+  if (!state.department) {
+    errors.push({ path: 'department', message: 'El departamento es requerido' })
   }
 
   return errors
@@ -65,6 +69,9 @@ const submit = (event: FormSubmitEvent<TicketCreate>) => {
     </UFormGroup>
     <UFormGroup label="Status" name="status">
       <StatusSelect v-model="state.form.status" />
+    </UFormGroup>
+    <UFormGroup label="Departamento" name="department">
+      <DepartmentSelect v-model="state.form.department" />
     </UFormGroup>
     <UFormGroup label="Asignar a" name="assignedTo">
       <UserSelect v-model="state.form.assignedTo!" />

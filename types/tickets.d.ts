@@ -1,7 +1,6 @@
 import type { Department, DepartmentResponse } from "./department";
 import type { Route, RouteResponse } from "./routes";
 import type { Status, StatusResponse } from "./status";
-import type { Thread, ThreadResponse } from "./thread";
 import type { User, UserResponse } from "./user";
 
 interface Expand {
@@ -27,7 +26,6 @@ export interface TicketResponse {
   route:          string;
   isClosed:       boolean;
   closedAt:       Date;
-  thread:          string;
   expand:          Expand;
 }
 
@@ -45,7 +43,6 @@ export interface Ticket {
   agentCode:      string;
   isClosed:       boolean;
   timeSince?:     string;
-  thread?:         Thread;
   route?:          Route;
   closedAt:       Date;
   createdAt:      Date;
@@ -59,7 +56,7 @@ export interface TicketCreate {
   agentCode:      string;
   senderId?:      number;
   route?:         string;
-  department?:    string;
+  department:     string;
   conversationId?:number;
   isClosed?:      boolean;
   assignedTo?:    string;
