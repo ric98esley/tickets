@@ -23,6 +23,7 @@ const ticketToEdit = ref<TicketCreate>({
   customerName: props.data.customerName,
   phone: props.data.phone,
   assignedTo: props.data.assignedTo?.id ?? '',
+  department: props.data.department?.id ?? '', 
   status: props.data.status?.id ?? '',
   agentCode: props.data.agentCode,
   conversationId: props.data.conversationId,
@@ -89,7 +90,7 @@ const items = [[{
 
 <template>
   <div>
-    <UCard v-if="props.data" class="w-72 h-80 lg:w-96 lg:h-[400px] flex-col cursor-pointer" :ui="{ divide: '' }">
+    <UCard v-if="props.data" class="w-80 lg:w-96 min-h-[400px] flex-col cursor-pointer" :ui="{ divide: '' }">
       <template #header>
         <div class="flex items-center justify-between h-16">
           <div @click="navigateTo(`/tickets/${props.data.id}`)"
@@ -108,10 +109,13 @@ const items = [[{
           </div>
         </div>
       </template>
-      <div class="h-28 md:h-28 flex flex-col" @click="navigateTo(`/tickets/${props.data.id}`)">
+      <div class="flex flex-col" @click="navigateTo(`/tickets/${props.data.id}`)">
 
         <h3 class="text-lg font-bold">
           Soporte: <span class="text-primary-600 text-base"># {{ props.data?.id.toUpperCase() }}</span>
+        </h3>
+        <h3 class="text-lg font-bold">
+          Departamento: <span class="text-primary-600">{{ props.data?.department?.name }}</span>
         </h3>
         <div class="mt-2">
           <p>

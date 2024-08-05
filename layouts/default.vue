@@ -24,7 +24,7 @@ const handlerSubmit = async (data: TicketCreate) => {
   await useCreateThread({
       ticket: ticket.id,
       content: `
-        <p>Estado: ${ticket.status}</p>
+        <p>Estado: ${ticket.status?.name}</p>
         <p>Asignado a: ${ticket.assignedTo?.name || 'Sin asignar'}</p>
         <p>Departamento: ${ticket.department?.name}</p>
       `,
