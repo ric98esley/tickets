@@ -127,8 +127,8 @@ const items = [[{
             </span>
           </p>
         </div>
-        <div class="mt-4">
-
+        <div v-if="props.data.content" v-html="props.data.content"
+          class="mt-4 outline-none text-black opacity-60 dark:text-white dark:opacity-70" tabindex="0">
         </div>
       </div>
       <template #footer>
