@@ -55,6 +55,9 @@ const columns = [{
 },{
   key: 'content',
   label: 'Contenido'
+}, {
+  key: 'route.name',
+  label: 'Ruta'
 },{
   key: 'assignedTo.name',
   label: 'Asignado a'

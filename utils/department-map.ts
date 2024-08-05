@@ -4,7 +4,7 @@ export const departmentMapper = (data: DepartmentResponse): Department => {
   return {
     id: data.id,
     name: data.name,
-    createdAt: data.created,
-    updatedAt: data.updated
+    created: data.created,
+    updated: data.updated
   };
 }
