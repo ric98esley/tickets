@@ -8,7 +8,7 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'handleSelect'])
 
 const user = ref<User | undefined>(undefined)
 
@@ -23,9 +23,9 @@ const searchUsers = async (query: string) => {
 }
 
 watch(user, (value) => {
-  console.log(value)
   if (value) {
     emit('update:modelValue', value.id)
+    emit('handleSelect', value)
   }
 }, {deep: true})
 

@@ -8,7 +8,7 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'handleSelect'])
 
 const status = ref<Status | undefined>(undefined)
 
@@ -25,6 +25,7 @@ const searchStatus = async (query: string) => {
 watch(status, (value) => {
   if (value) {
     emit('update:modelValue', value.id)
+    emit('handleSelect', value)
   }
 })
 

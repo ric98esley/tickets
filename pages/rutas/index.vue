@@ -32,7 +32,7 @@ const handlerSubmit = async (data: RouteCreate) => {
   const response = await useCreateRoute(data)
   if (!response) return
   for (const ticket of data.tickets) {
-    await useUpdateTicket(ticket.id, { route: response.id })
+    await useUpdateTicket(ticket.id, { route: response.id, assignedTo: data.assignedTo })
   }
 
   await getRoutes()

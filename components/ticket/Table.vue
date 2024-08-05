@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { TicketDelete, TicketModal, TicketModalResolve } from "#components";
-import type { FindTickets, Ticket, TicketCreate, TicketResolve } from "~/types";
+import { TicketAssignTo, TicketChangeStatus, TicketDelete, TicketModal, TicketModalResolve } from "#components";
+import type { FindTickets, Status, Ticket, TicketCreate, TicketResolve } from "~/types";
 
 const modal = useModal()
 
@@ -52,13 +52,16 @@ const columns = [{
 }, {
   key: 'status.name',
   label: 'Estatus'
-},{
+}, {
   key: 'content',
   label: 'Contenido'
+},{
+  key: 'department.name',
+  label: 'Departamento'
 }, {
   key: 'route.name',
   label: 'Ruta'
-},{
+}, {
   key: 'assignedTo.name',
   label: 'Asignado a'
 }, {
@@ -96,14 +99,6 @@ const updateTicket = async (id: string, data: TicketCreate) => {
   return ticket
 }
 
-const unassigned = async (row: Ticket) => {
-  if (!row.id) return
-  console.log(row)
-  const ticket = await useUpdateTicket(row.id, { route: null })
-  emit('refresh')
-  return ticket
-}
-
 const resolveTicket = async (id: string, data: TicketResolve) => {
   if (!data.content) {
     const toast = useToast()
@@ -117,9 +112,17 @@ const resolveTicket = async (id: string, data: TicketResolve) => {
       ticket: ticket.id,
       content: data.content,
     })
+    await useCreateThread({
+      ticket: ticket.id,
+      content: `El ticket ha sido resuelto por ${ticket.assignedTo?.name}`,
+    })
   }
+}
 
-  modal.close()
+const unassigned = async (row: Ticket) => {
+  if (!row.id) return
+  console.log(row)
+  const ticket = await useUpdateTicket(row.id, { route: null })
   emit('refresh')
   return ticket
 }
@@ -161,16 +164,41 @@ const items = (row: Ticket) => [
       })
     }
   }, {
+    label: 'Cambiar status',
+    icon: 'i-heroicons-archive-box-arrow-down-solid',
+    click: () => {
+      modal.open(TicketChangeStatus, {
+        status: row.status?.id,
+        ticket: row.id,
+        onSubmit: (state) => {
+          emit('refresh')
+          modal.close()
+        },
+      })
+    }
+  }, {
     label: 'Resolver',
     icon: 'i-heroicons-document-duplicate-20-solid',
     click: () => {
-      modal.open(TicketModalResolve, {
-        onSubmit: (form) => resolveTicket(row.id, form),
+      modal.open(TicketModalResolve,
+        {
+          ticket: row.id,
+          onSubmit: (form) => emit('refresh'),
+        })
+    }
+  }, {
+    label: 'Asignar a',
+    icon: 'i-heroicons-user-group-20-solid',
+    click: () => {
+      modal.open(TicketAssignTo, {
+        ticket: row.id,
+        assignedTo: row.assignedTo?.id ?? '',
+        onSubmit: (form) => emit('refresh'),
       })
     }
   }], [
     {
-      label: 'Quitar',
+      label: 'Quitar de la ruta',
       icon: 'i-heroicons-arrow-uturn-right-16-solid',
       click: async () => {
         await unassigned(row)
@@ -203,7 +231,7 @@ const resolve = [
 ]
 
 const actions = [
-  { label: 'Quitar', value: 'unassigned' },
+  { label: 'Quitar de la ruta', value: 'unassigned' },
   { label: 'Resolver', value: 'resolve' },
   { label: 'Borrar', value: 'delete' },
 ]
@@ -218,7 +246,8 @@ const actions = [
         <UButton icon="i-heroicons-check-16-solid" label="Aplicar" @click="applyAction" />
       </div>
       <div class="flex pb-4">
-        <USelectMenu class="w-full" v-model="selectedColumns" :options="columns" multiple placeholder="Columnas" label="Selecciona">
+        <USelectMenu class="w-full" v-model="selectedColumns" :options="columns" multiple placeholder="Columnas"
+          label="Selecciona">
           <template #label>
             <span class="truncate">{{ selectedColumns.length }}</span>
             <span>Columnas</span>
