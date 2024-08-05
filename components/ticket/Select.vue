@@ -21,8 +21,8 @@ const loading = ref(false)
 
 const searchTickets = async (query: string) => {
   loading.value = true
-  const tickets = await useFindTickets({ agentCode: query })
-  
+  const tickets = await useFindTickets({ agentCode: query, limit: 200, isClosed: false })
+
   loading.value = false
   return tickets.rows.filter(props.filterBy)
 }
@@ -30,13 +30,6 @@ const searchTickets = async (query: string) => {
 watch(selected, (value) => {
   if (value) {
     emit('update:modelValue', value)
-  }
-})
-
-onMounted(async () => {
-  if (props.modelValue) {
-    const tickets = await useFindTickets({ limit: 200, isClosed: false})
-    selected.value = tickets.rows
   }
 })
 </script>

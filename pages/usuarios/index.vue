@@ -43,6 +43,13 @@ onMounted(async () =>  {
 
 <template>
   <UContainer>
-    <UserTable :data="users.rows" v-model:filters="filters" :total="users.total"/>
+    <UCard>
+      <template #header>
+        <div class="flex justify-between items-center">
+          <h1 class="text-2xl font-bold">Usuarios</h1>
+        </div>
+      </template>
+      <UserTable :data="users.rows" v-model:filters="filters" :total="users.total"/>
+    </UCard>
   </UContainer>
 </template>

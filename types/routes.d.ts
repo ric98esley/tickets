@@ -50,3 +50,11 @@ export interface RouteCreate {
   started: string;
   tickets: Ticket[];
 }
+
+export interface RouteUpdate {
+  name?: string;
+  assignedTo?: string;
+  started?: string;
+  closed?: string;
+  tickets?: Ticket[];
+}

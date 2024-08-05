@@ -208,11 +208,11 @@ const actions = [
     <div
       class="flex flex-col justify-end content-end md:flex-row md:justify-between px-0 py-3.5 border-b border-gray-200 dark:border-gray-700">
       <div class="flex pb-4">
-        <USelect v-model="action" class="mr-4" :options="actions" option-attribute="label" />
-        <UButton label="Aplicar" @click="applyAction" />
+        <USelect v-model="action" class="mr-4 w-full" :options="actions" option-attribute="label" />
+        <UButton icon="i-heroicons-check-16-solid" label="Aplicar" @click="applyAction" />
       </div>
       <div class="flex pb-4">
-        <USelectMenu v-model="selectedColumns" :options="columns" multiple placeholder="Columnas" label="Selecciona">
+        <USelectMenu class="w-full" v-model="selectedColumns" :options="columns" multiple placeholder="Columnas" label="Selecciona">
           <template #label>
             <span class="truncate">{{ selectedColumns.length }}</span>
             <span>Columnas</span>

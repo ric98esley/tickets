@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import type { Route, RouteFind } from '~/types';
+import { RoutesSaveModal } from '#components';
+import type { Route, RouteCreate, RouteFind } from '~/types';
 
-const statusStore = useStatusStore()
+const modal = useModal()
 
 const props = defineProps({
   data: {
@@ -50,12 +51,6 @@ const columns = [{
   label: 'Acciones'
 }]
 
-const modals = reactive({
-  edit: false
-})
-
-const statusToEdit = ref<Route | undefined>(undefined)
-
 const emit = defineEmits(['update:filters', 'refresh'])
 
 const filters = computed({
@@ -63,28 +58,24 @@ const filters = computed({
   set: (value) => emit('update:filters', value)
 })
 
-// const deleteStatus = async (row: Route) => {
-//   await statusStore.deleteStatus(row)
-//   emit('refresh')
-// }
-
-// const updateStatus = async (data: StatusCreate) => {
-//   if (!statusToEdit.value) return
-
-//   await statusStore.updateStatus({
-//     id: statusToEdit.value.id,
-//     name: data.name,
-//     color: data.color?.toUpperCase() || ''
-//   })
-//   modals.edit = false
-//   emit('refresh')
-// }
-
 const items = (row: Route) => [
   [{
     label: 'Editar',
     icon: 'i-heroicons-pencil-square-20-solid',
     click: () => {
+      modal.open(RoutesSaveModal, {
+        form: {
+          name: row.name,
+          assignedTo: row.assignedTo?.id ?? '',
+          started: row.started.toString() ?? '',
+          tickets: row.tickets
+        },
+        onSubmit: async (data: RouteCreate) => {
+          await useUpdateRoute(row.id, data)
+          emit('refresh')
+          modal.close()
+        }
+      })
     }
   }, {
     label: 'Ver',
@@ -95,7 +86,10 @@ const items = (row: Route) => [
   }], [{
     label: 'Terminar',
     icon: 'i-heroicons-check-circle-20-solid',
-    click: () => { }
+    click: async () => {
+      await useUpdateRoute(row.id, { closed: new Date().toISOString() })
+      emit('refresh')
+    }
   }]
 ]
 </script>
@@ -121,7 +115,7 @@ const items = (row: Route) => [
         {{ dateFormattedWithTime(row.created) }}
       </template>
       <template #started-data="{ row }">
-        {{ row.started ? dateFormatted(row.started) : 'No iniciado' }}
+        {{ row.started ? dateFormatted(row.started): 'No iniciado' }}
       </template>
       <template #closed-data="{ row }">
         {{ row.closed ? dateFormatted(row.closed) : 'No finalizado' }}
@@ -133,13 +127,5 @@ const items = (row: Route) => [
       </template>
     </UTable>
     <Pagination :total="props.total" v-model:limit="filters.limit" v-model:page="filters.page" />
-    <!-- <UModal v-model="modals.edit">
-      <UCard class="p-4">
-        <template #header>
-          Editar Status: {{ statusToEdit?.name }}
-        </template>
-        <StatusForm @submit="updateStatus" :form="statusToEdit" />
-      </UCard>
-    </UModal> -->
   </div>
 </template>

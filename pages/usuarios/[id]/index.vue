@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { FindTickets, Ticket } from '~/types';
+import type { FindTickets, Ticket, User } from '~/types';
 
 const route = useRoute()
 const router = useRouter()
@@ -7,6 +7,8 @@ const router = useRouter()
 const modals = reactive({
   dates: false
 })
+
+const user = ref<User | null>(null)
 
 const tickets = reactive<{ total: number, rows: Ticket[] }>({
   total: 0,
@@ -35,6 +37,13 @@ const getTickets = async (data: FindTickets) => {
   tickets.total = total
 }
 
+const getUser = async () => {
+  const userId = route.params.id.toString()
+
+  if (!userId) return
+  user.value = await useFindOneUser(userId)
+}
+
 
 watch(filters, async (data) => {
   const query = { ...data }
@@ -48,6 +57,7 @@ watch(filters, async (data) => {
 
 onMounted(async () => {
   await getTickets(filters)
+  await getUser()
 })
 
 </script>
@@ -56,8 +66,12 @@ onMounted(async () => {
   <UContainer>
     <UCard>
       <template #header>
-        <UButton icon="i-heroicons-funnel-16-solid" label="Filtrar Fechas" @click="modals.dates = true" />
+        <h2 class="mb-4">Tickets del usuario: {{ user?.name }}</h2>
+        <p>Usuario: {{ user?.username }}</p>
       </template>
+      <div class="flex ml-4 md:ml-6 lg:ml-8 gap-4">
+        <UButton icon="i-heroicons-funnel-16-solid" label="Filtrar Fechas" @click="modals.dates = true" />
+      </div>
       <TicketTable :data="tickets.rows" v-model:filters="filters" :total="tickets.total"
         @refresh="getTickets(filters)" />
     </UCard>

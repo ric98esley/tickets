@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { FindTickets, Route, Ticket } from '~/types';
+import type { FindTickets, Route, RouteCreate, Ticket } from '~/types';
 const route = useRoute()
 const router = useRouter()
 
@@ -12,7 +12,8 @@ const items = [{
 }]
 
 const modals = reactive({
-  dates: false
+  dates: false,
+  edit: false
 })
 
 const tickets = reactive<{ total: number, rows: Ticket[] }>({
@@ -53,30 +54,34 @@ watch(filters, async (data) => {
   await getTickets(data)
 })
 
-const selected = computed({
-  get() {
-    const index = items.findIndex((item) => item.label === route.query.tab)
-    if (index === -1) {
-      return 0
-    }
-
-    if (index === 1) {
-      getTickets(filters)
-    }
-
-    return index
-  },
-  set(value) {
-    // Hash is specified here to prevent the page from scrolling to the top
-    router.replace({ query: { tab: items[value].label } })
-  }
-})
-
 const routeData = ref<Route | undefined>(undefined)
+
+const routeEdit = ref<RouteCreate | undefined>(undefined)
 
 const getRoute = async () => {
   const res = await useFindOneRoute(String(route.params.id))
-  return routeData.value = res
+
+  if (!res) return
+
+  routeEdit.value = {
+    name: res?.name ?? '',
+    assignedTo: res.assignedTo?.id ?? '',
+    started: res.started.toString().split(' ')[0] ?? '',
+    tickets: res.tickets
+  }
+
+  routeData.value = res
+}
+
+const handlerSubmit = async (data: RouteCreate) => {
+  if(routeData.value === undefined) return
+  const response = await useUpdateRoute(routeData.value.id ,data)
+  if (!response) return
+  for (const ticket of data.tickets) {
+    await useUpdateTicket(ticket.id, { route: response.id })
+  }
+
+  await getTickets(filters)
 }
 
 onMounted(() => {
@@ -102,7 +107,7 @@ onMounted(() => {
                 <span class="text-primary font-bold">Asignado a: {{ routeData.assignedTo?.name }}</span>
               </NuxtLink>
               <div>
-                <UButton icon="i-heroicons-pencil-square-solid" label="Editar"/>
+                <UButton icon="i-heroicons-pencil-square-solid" label="Editar" @click="modals.edit = true" />
               </div>
             </div>
           </div>
@@ -165,6 +170,11 @@ onMounted(() => {
             </div>
           </div>
         </div>
+      </UCard>
+    </UModal>
+    <UModal v-model="modals.edit">
+      <UCard>
+        <RoutesSave :form="routeEdit" @submit="handlerSubmit" />
       </UCard>
     </UModal>
   </div>

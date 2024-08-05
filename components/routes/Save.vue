@@ -57,11 +57,16 @@ const submit = (event: FormSubmitEvent<any>) => {
     <UFormGroup label="Asignar a" name="assignedTo">
       <UserSelect v-model="form.assignedTo" />
     </UFormGroup>
-    <UFormGroup label="Fecha inicio" name="started">
-      <UInput type="date" v-model="form.started" />
-    </UFormGroup>
     <UFormGroup label="Tickets" name="tickets">
-      <TicketSelect v-model="form.tickets" :filter-by="(value) => value.route == undefined"/>
+      <TicketSelect v-model="form.tickets" :filter-by="(value) => value.route == undefined" />
+    </UFormGroup>
+    <UFormGroup label="Fecha inicio" name="started">
+      <UPopover :popper="{ placement: 'bottom-start' }">
+        <UButton icon="i-heroicons-calendar-days-20-solid" color="gray" :label="dateFormatted(form?.started)" variant="ghost" />
+        <template #panel="{ close }">
+          <DatePicker v-model="form.started" is-required @close="close" />
+        </template>
+      </UPopover>
     </UFormGroup>
     <UButton type="submit">
       Guardar

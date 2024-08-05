@@ -1,4 +1,4 @@
-import type { RouteResponse, Route, RouteCreate } from "~/types";
+import type { RouteResponse, Route, RouteCreate, RouteUpdate } from "~/types";
 
 export const useFindRoutes = async (): Promise<{ total: number, rows: Route[] }> => {
   try {
@@ -66,3 +66,29 @@ export const useCreateRoute = async (data: RouteCreate): Promise<Route | null> =
     return null;
   }
 };
+
+export const useUpdateRoute = async (id: string, data: RouteUpdate): Promise<Route | null> => {
+  const toast = useToast();
+  try {
+    const { $pb } = useNuxtApp();
+    const route = await $pb.collection<RouteResponse>('routes').update(id, data, {
+      expand: 'assignedTo,createdBy'
+    });
+
+    toast.add({
+      title: 'Ruta actualizada',
+      description: 'La ruta se ha actualizado correctamente',
+    })
+
+    return routeMapper(route);
+
+  } catch (error) {
+    console.error(error);
+    toast.add({
+      title: 'Error al actualizar la ruta',
+      description: 'Intenta de nuevo',
+      color: 'red'
+    })
+    return null;
+  }
+}

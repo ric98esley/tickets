@@ -14,7 +14,6 @@ const filters = reactive<RouteFind>({
   page: Number(route.query.page) || 1
 })
 
-
 const routes = reactive<{
   rows: Route[],
   total: number
@@ -23,7 +22,7 @@ const routes = reactive<{
   total: 0
 })
 
-const getRoutes = async (page = 1) => {
+const getRoutes = async () => {
   const data = await useFindRoutes()
   routes.rows = data.rows
   routes.total = data.total
@@ -54,7 +53,7 @@ onMounted(async () => {
           </div>
         </div>
       </template>
-      <RoutesTable :data="routes.rows" :total="routes.total" :filters="filters" />
+      <RoutesTable :data="routes.rows" :total="routes.total" :filters="filters" @refresh="getRoutes()" />
     </UCard>
     <UModal v-model="modals.add" @close="modals.add = false">
       <UCard>

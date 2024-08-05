@@ -23,10 +23,11 @@ const searchUsers = async (query: string) => {
 }
 
 watch(user, (value) => {
+  console.log(value)
   if (value) {
     emit('update:modelValue', value.id)
   }
-})
+}, {deep: true})
 
 onMounted(async () => {
   if (props.modelValue) {
