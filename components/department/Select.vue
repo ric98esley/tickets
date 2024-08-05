@@ -12,9 +12,9 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'handleSelect'])
 
-const selected = ref<Department>()
+const selected = ref<Department | null>()
 
 const loading = ref(false)
 
@@ -29,6 +29,13 @@ const searchDepartments = async (query: string) => {
 watch(selected, (value) => {
   if (value) {
     emit('update:modelValue', value.id)
+    emit('handleSelect', value)
+  }
+})
+
+onMounted(async () => {
+  if (props.modelValue) {
+    selected.value = await useFindOneDepartment(props.modelValue)
   }
 })
 </script>

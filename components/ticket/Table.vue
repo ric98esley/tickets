@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { TicketAssignTo, TicketChangeStatus, TicketDelete, TicketModal, TicketModalResolve } from "#components";
-import type { FindTickets, Status, Ticket, TicketCreate, TicketResolve } from "~/types";
+import { TicketAssignTo, TicketChangeStatus, TicketDelete, TicketModal, TicketModalResolve, TicketTransfer } from "#components";
+import type { Department, FindTickets, Ticket, TicketCreate, TicketResolve } from "~/types";
 
 const modal = useModal()
 
@@ -196,8 +196,17 @@ const items = (row: Ticket) => [
         onSubmit: (form) => emit('refresh'),
       })
     }
-  }], [
-    {
+  }], [{
+      label: 'Transferir',
+      icon: 'i-heroicons-arrow-right-20-solid',
+      click: () => {
+        modal.open(TicketTransfer, {
+          ticket: row.id,
+          department: row.department?.id ?? '',
+          onSubmit: (form: Department) => emit('refresh'),
+        })
+      }
+    }, {
       label: 'Quitar de la ruta',
       icon: 'i-heroicons-arrow-uturn-right-16-solid',
       click: async () => {

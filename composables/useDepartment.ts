@@ -19,3 +19,14 @@ export const useFindDepartments = async (data: FindDepartment): Promise<{ total:
     return { total: 0, rows: [] }
   }
 }
+
+export const useFindOneDepartment = async (id: string): Promise<Department | null> => {
+  try {
+    const { $pb } = useNuxtApp();
+    const department = await $pb.collection<DepartmentResponse>('departments').getOne(id);
+    return departmentMapper(department);
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
