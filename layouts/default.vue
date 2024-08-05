@@ -16,14 +16,19 @@ const handlerSubmit = async (data: TicketCreate) => {
   const ticket = await useCreateTicket(data)
   if (!ticket) return;
 
-  const thread = await useCreateThread({
+  await useCreateThread({
     ticket: ticket.id,
     content: data.content,
   })
 
-  await useUpdateTicket(ticket.id, {
-    thread: thread?.id,
-  })
+  await useCreateThread({
+      ticket: ticket.id,
+      content: `
+        <p>Estado: ${ticket.status}</p>
+        <p>Asignado a: ${ticket.assignedTo?.name || 'Sin asignar'}</p>
+        <p>Departamento: ${ticket.department?.name}</p>
+      `,
+    })
 
   toast.add({
     title: 'Ticket creado',

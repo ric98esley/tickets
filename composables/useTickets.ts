@@ -1,6 +1,8 @@
 import type { FindTickets, Ticket, TicketCreate, TicketResponse, TicketUpdate } from "~/types"
 import { ticketEntityMapper } from "~/utils/ticket-map"
 
+const expand = 'createdBy,assignedTo,status,department,route'
+
 function makeFilter(data: FindTickets): string {
   let filter = ''
   if (data.id) filter = constructQuery(filter, `id~"${data.id}"`)
@@ -8,6 +10,8 @@ function makeFilter(data: FindTickets): string {
   if (data.customerName) filter = constructQuery(filter, `customerName~"${data.customerName}"`)
   if (data.createdBy) filter = constructQuery(filter, `createdBy.username~"${data.createdBy}"`)
   if (data.assignedTo) filter = constructQuery(filter, `assignedTo.username~"${data.assignedTo}"`)
+  if (data.department) filter = constructQuery(filter, `department.name~"${data.department}"`)
+  if (data.content) filter = constructQuery(filter, `content~"${data.content}"`)
   if (data.status) filter = constructQuery(filter, `status.name~"${data.status}"`)
   if (data.createdStart) filter = constructQuery(filter, `created>"${dateForFilterFormatted(data.createdStart)}"`)
   if (data.createdEnd) filter = constructQuery(filter, `created<"${dateForFilterFormatted(data.createdEnd)}"`)
@@ -27,7 +31,7 @@ export async function useFindTickets(data: FindTickets): Promise<{ total: number
 
     const { $pb } = useNuxtApp()
     const resultList = await $pb.collection<TicketResponse>('tickets').getList(data.page ?? 1, data.limit ?? 100, {
-      expand: 'createdBy,assignedTo,status,thread,route',
+      expand: expand,
       sort: '-created',
       filter
     })
@@ -56,7 +60,7 @@ export async function useFindTicketsByAssignedTo(assignedTo: string ,data: FindT
 
     const { $pb } = useNuxtApp()
     const resultList = await $pb.collection<TicketResponse>('tickets').getList(data.page ?? 1, data.limit ?? 100, {
-      expand: 'createdBy,assignedTo,status,thread,route',
+      expand: expand,
       sort: '-created',
       filter
     })
@@ -85,7 +89,7 @@ export async function useFindTicketsByRoute(route: string ,data: FindTickets): P
 
     const { $pb } = useNuxtApp()
     const resultList = await $pb.collection<TicketResponse>('tickets').getList(data.page ?? 1, data.limit ?? 100, {
-      expand: 'createdBy,assignedTo,status,thread',
+      expand: expand,
       sort: '-created',
       filter
     })
@@ -111,7 +115,7 @@ export async function useFindOneTicket(id: string): Promise<Ticket | null> {
   try {
     const { $pb } = useNuxtApp()
     const ticket = await $pb.collection<TicketResponse>('tickets').getOne(id, {
-      expand: 'createdBy,assignedTo,status,thread,route',
+      expand: expand,
     })
 
     return ticketEntityMapper(ticket)
@@ -129,7 +133,7 @@ export async function useCreateTicket(data: TicketCreate): Promise<Ticket | null
       ...data,
       createdBy: userStore.user?.id,
     }, {
-      expand: 'createdBy,assignedTo,status,thread,route',
+      expand: expand,
     })
 
     return ticketEntityMapper(ticket)
@@ -149,7 +153,7 @@ export async function useUpdateTicket(id: string, data: TicketUpdate): Promise<T
     const { $pb } = useNuxtApp()
     const ticket = await $pb.collection<TicketResponse>('tickets').update(id,
       data, {
-      expand: 'createdBy,assignedTo,status,thread,route',
+      expand: expand,
     })
 
     return ticketEntityMapper(ticket)
@@ -192,7 +196,7 @@ export async function subscribeTickets(callback: (ticket: Ticket, action: string
     callback(ticketEntityMapper(e.record), e.action)
   },
     {
-      expand: 'createdBy,assignedTo,status,thread,route',
+      expand: expand,
     }
   )
 }
