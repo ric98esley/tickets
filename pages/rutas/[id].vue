@@ -81,6 +81,11 @@ const handlerSubmit = async (data: RouteCreate) => {
     await useUpdateTicket(ticket.id, { route: response.id })
   }
 
+  await useUpdateTicketWhere(`route="${route.params.id}"`,{
+    route: response.id,
+    assignedTo: data.assignedTo
+  })
+
   await getTickets(filters)
 }
 
@@ -172,8 +177,14 @@ onMounted(() => {
         </div>
       </UCard>
     </UModal>
-    <UModal v-model="modals.edit">
+    <UModal v-model="modals.edit" prevent-close>
       <UCard>
+        <template #header>
+          <div class="text-lg font-semibold flex justify-between">
+            <h2>Editar Ruta</h2>
+            <UButton @click="modals.edit = false" icon="i-heroicons-x-mark-16-solid" variant="link" />
+          </div>
+        </template>
         <RoutesSave :form="routeEdit" @submit="handlerSubmit" />
       </UCard>
     </UModal>

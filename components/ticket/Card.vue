@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { TicketDelete } from "#components";
-import type { Ticket, TicketCreate, TicketResolve } from "~/types";
+import { TicketAssignTo, TicketChangeStatus, TicketDelete, TicketEdit, TicketModalResolve, TicketTransfer } from "#components";
+import type { Department, Ticket, TicketCreate, TicketResolve } from "~/types";
 
 const modal = useModal()
 
@@ -23,7 +23,7 @@ const ticketToEdit = ref<TicketCreate>({
   customerName: props.data.customerName,
   phone: props.data.phone,
   assignedTo: props.data.assignedTo?.id ?? '',
-  department: props.data.department?.id ?? '', 
+  department: props.data.department?.id ?? '',
   status: props.data.status?.id ?? '',
   agentCode: props.data.agentCode,
   conversationId: props.data.conversationId,
@@ -31,60 +31,97 @@ const ticketToEdit = ref<TicketCreate>({
   content: '',
 })
 
-const updateTicket = async (data: TicketCreate) => {
-  if (!ticketToEdit.value.id) return
-  const ticket = await useUpdateTicket(ticketToEdit.value.id, data)
-  if (data.content && data.content !== "<p></p>" && ticket?.id) {
-    const thread = await useCreateThread({
-      ticket: ticket.id,
-      content: data.content,
-    })
-  }
-
-  modals.update = false
+const unassigned = async (row: Ticket) => {
+  if (!row.id) return
+  console.log(row)
+  const ticket = await useUpdateTicket(row.id, { route: null })
   return ticket
 }
 
-const resolveTicket = async (data: TicketResolve) => {
-  if (!data.content) {
-    const toast = useToast()
-    toast.add({ color: 'red', title: 'El contenido es requerido' })
-    return
+const items = [
+  [{
+    label: 'Editar',
+    icon: 'i-heroicons-pencil-square-20-solid',
+    click: () => {
+      const ticket = {
+        customerName: props.data.customerName,
+        phone: props.data.phone,
+        agentCode: props.data.agentCode,
+        conversationId: props.data.conversationId,
+        senderId: props.data.senderId,
+        content: props.data.content,
+        department: props.data.department?.id ?? '',
+        assignedTo: props.data.assignedTo?.id ?? '',
+        status: props.data.status?.id ?? '',
+      }
+      modal.open(TicketEdit, {
+        form: ticket,
+        ticket: props.data.id,
+      })
+    }
+  }, {
+    label: 'Cambiar status',
+    icon: 'i-heroicons-archive-box-arrow-down-solid',
+    click: () => {
+      modal.open(TicketChangeStatus, {
+        status: props.data.status?.id,
+        ticket: props.data.id,
+        onSubmit: (state) => {
+          modal.close()
+        },
+      })
+    }
+  }, {
+    label: 'Resolver',
+    icon: 'i-heroicons-document-duplicate-20-solid',
+    click: () => {
+      modal.open(TicketModalResolve,
+        {
+          ticket: props.data.id,
+        })
+    }
+  }, {
+    label: 'Asignar a',
+    icon: 'i-heroicons-user-group-20-solid',
+    click: () => {
+      modal.open(TicketAssignTo, {
+        ticket: props.data.id,
+        assignedTo: props.data.assignedTo?.id ?? '',
+      })
+    }
+  }], [{
+    label: 'Transferir',
+    icon: 'i-heroicons-arrow-right-20-solid',
+    click: () => {
+      modal.open(TicketTransfer, {
+        ticket: props.data.id,
+        department: props.data.department?.id ?? '',
+      })
+    }
+  }, {
+    label: 'Quitar de la ruta',
+    icon: 'i-heroicons-arrow-uturn-right-16-solid',
+    click: async () => {
+      await unassigned(props.data)
+    }
   }
-  if (!ticketToEdit.value.id) return
-  const ticket = await useUpdateTicket(ticketToEdit.value.id, { isClosed: true, closedAt: new Date() })
-  if (data.content && data.content !== "<p></p>" && ticket?.id) {
-    await useCreateThread({
-      ticket: ticket.id,
-      content: data.content,
-    })
-  }
-
-  modals.resolve = false
-  return ticket
-}
-
-const items = [[{
-  label: 'Editar',
-  icon: 'i-heroicons-pencil-square-20-solid',
-  click: () => {
-    modals.update = true
-  }
-}, {
-  label: 'Resolver',
-  icon: 'i-heroicons-document-duplicate-20-solid',
-  click: () => {
-    modals.resolve = true
-  }
-}], [{
-  label: 'Borrar',
-  icon: 'i-heroicons-trash-20-solid',
-  click: () => {
-    modal.open(TicketDelete, {
-      id: props.data.id
-    })
-  }
-}]
+  ], [
+    {
+      label: 'Ver',
+      icon: 'i-heroicons-eye-20-solid',
+      click: () => {
+        navigateTo(`/tickets/${props.data.id}`)
+      }
+    }
+  ], [{
+    label: 'Borrar',
+    icon: 'i-heroicons-trash-20-solid',
+    click: () => {
+      modal.open(TicketDelete, {
+        id: props.data.id,
+      })
+    }
+  }]
 ]
 </script>
 
@@ -165,27 +202,5 @@ const items = [[{
     <div>
       <TicketDelete :id="props.data.id" @success="() => $emit('update:form', true)" />
     </div>
-    <UModal v-model="modals.update" title="Editar Ticket" prevent-close>
-      <UCard>
-        <template #header>
-          <div class="text-lg font-semibold flex justify-between">
-            <h2>Editar ticket</h2>
-            <UButton @click="modals.update = false" icon="i-heroicons-x-mark-16-solid" variant="link" />
-          </div>
-        </template>
-        <TicketForm :form="ticketToEdit" @submit="updateTicket" />
-      </UCard>
-    </UModal>
-    <UModal v-model="modals.resolve" title="Resolver ticket" prevent-close>
-      <UCard>
-        <template #header>
-          <div class="text-lg font-semibold flex justify-between">
-            <h2>Resolver ticket</h2>
-            <UButton @click="modals.resolve = false" icon="i-heroicons-x-mark-16-solid" variant="link" />
-          </div>
-        </template>
-        <TicketResolve :form="ticketToEdit" @submit="resolveTicket" />
-      </UCard>
-    </UModal>
   </div>
 </template>

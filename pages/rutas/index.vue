@@ -55,10 +55,13 @@ onMounted(async () => {
       </template>
       <RoutesTable :data="routes.rows" :total="routes.total" :filters="filters" @refresh="getRoutes()" />
     </UCard>
-    <UModal v-model="modals.add" @close="modals.add = false">
+    <UModal v-model="modals.add" @close="modals.add = false" prevent-close>
       <UCard>
         <template #header>
-          <h1 class="text-2xl font-bold">Nueva Ruta</h1>
+          <div class="flex justify-between">
+            <h1 class="text-2xl font-bold">Nueva Ruta</h1>
+            <UButton @click="modals.add = false" icon="i-heroicons-x-mark-16-solid" variant="link" />
+          </div>
         </template>
         <template #default>
           <RoutesSave @submit="handlerSubmit" />

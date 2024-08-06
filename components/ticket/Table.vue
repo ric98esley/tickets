@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { TicketAssignTo, TicketChangeStatus, TicketDelete, TicketModal, TicketModalResolve, TicketTransfer } from "#components";
+import { TicketAssignTo, TicketChangeStatus, TicketDelete, TicketEdit, TicketModal, TicketModalResolve, TicketTransfer } from "#components";
 import type { Department, FindTickets, Ticket, TicketCreate, TicketResolve } from "~/types";
 
 const modal = useModal()
@@ -84,21 +84,6 @@ const selected = ref<Ticket[]>([])
 
 const action = ref<any>(undefined)
 
-const updateTicket = async (id: string, data: TicketCreate) => {
-  if (!id) return
-  const ticket = await useUpdateTicket(id, data)
-  if (data.content && data.content !== "<p></p>" && ticket?.id) {
-    const thread = await useCreateThread({
-      ticket: ticket.id,
-      content: data.content,
-    })
-  }
-
-  modal.close()
-  emit('refresh')
-  return ticket
-}
-
 const resolveTicket = async (id: string, data: TicketResolve) => {
   if (!data.content) {
     const toast = useToast()
@@ -151,6 +136,26 @@ const applyAction = async () => {
     action.value = undefined
     selected.value = []
   }
+  if (action.value === 'assign') {
+    modal.open(TicketAssignTo, {
+      onSubmit: async (form) => {
+        await Promise.all(selected.value.map(async (row) => await useUpdateTicket(row.id, { assignedTo: form.assignedTo })))
+        emit('refresh')
+        action.value = undefined
+        selected.value = []
+      }
+    })
+  }
+  if (action.value === 'transfer') {
+    modal.open(TicketTransfer, {
+      onSubmit: async (form) => {
+        await Promise.all(selected.value.map(async (row) => await useUpdateTicket(row.id, { route: form.department })))
+        emit('refresh')
+        action.value = undefined
+        selected.value = []
+      }
+    })
+  }
 }
 
 const items = (row: Ticket) => [
@@ -158,9 +163,20 @@ const items = (row: Ticket) => [
     label: 'Editar',
     icon: 'i-heroicons-pencil-square-20-solid',
     click: () => {
-      modal.open(TicketModal, {
-        data: row,
-        onSubmit: (form) => updateTicket(row.id, form),
+      const ticket = {
+        customerName: row.customerName,
+        phone: row.phone,
+        agentCode: row.agentCode,
+        conversationId: row.conversationId,
+        senderId: row.senderId,
+        content: row.content,
+        department: row.department?.id ?? '',
+        assignedTo: row.assignedTo?.id ?? '',
+        status: row.status?.id ?? '',
+      }
+      modal.open(TicketEdit, {
+        form: ticket,
+        ticket: row.id,
       })
     }
   }, {
@@ -243,6 +259,8 @@ const actions = [
   { label: 'Quitar de la ruta', value: 'unassigned' },
   { label: 'Resolver', value: 'resolve' },
   { label: 'Borrar', value: 'delete' },
+  { label: 'Asignar a', value: 'assign' },
+  { label: 'Transferir', value: 'transfer' },
 ]
 </script>
 

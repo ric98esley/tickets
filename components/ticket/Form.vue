@@ -17,6 +17,8 @@ const emit = defineEmits({
 const disabledSubmit = ref(false)
 
 const validate = (state: TicketCreate): FormError[] => {
+  var regex = /^(\(\+?\d{2,3}\)[\*|\s|\-|\.]?(([\d][\*|\s|\-|\.]?){6})(([\d][\s|\-|\.]?){2})?|(\+?[\d][\s|\-|\.]?){8}(([\d][\s|\-|\.]?){2}(([\d][\s|\-|\.]?){2})?)?)$/;
+
   const errors = []
   if (!state.customerName) {
     errors.push({ path: 'customerName', message: 'El nombre del cliente es requerido' })
@@ -33,6 +35,10 @@ const validate = (state: TicketCreate): FormError[] => {
 
   if (!state.department) {
     errors.push({ path: 'department', message: 'El departamento es requerido' })
+  }
+
+  if(!state.phone.match(regex)){
+    errors.push({ path: 'phone', message: 'El teléfono no es válido' })
   }
 
   return errors
@@ -62,7 +68,7 @@ const submit = (event: FormSubmitEvent<TicketCreate>) => {
       <UInput v-model="state.form.customerName" />
     </UFormGroup>
     <UFormGroup label="Teléfono" name="phone">
-      <UInput v-model="state.form.phone" label="Teléfono" type="number" />
+      <UInput v-model="state.form.phone" label="Teléfono" />
     </UFormGroup>
     <UFormGroup label="Código de agencia" name="agentCode">
       <UInput v-model="state.form.agentCode" label="Código de agencia" />

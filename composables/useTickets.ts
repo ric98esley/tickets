@@ -53,7 +53,7 @@ export async function useFindTickets(data: FindTickets): Promise<{ total: number
   }
 }
 
-export async function useFindTicketsByAssignedTo(assignedTo: string ,data: FindTickets): Promise<{ total: number, rows: Ticket[] }> {
+export async function useFindTicketsByAssignedTo(assignedTo: string, data: FindTickets): Promise<{ total: number, rows: Ticket[] }> {
   try {
     let filter = makeFilter(data)
     filter = constructQuery(filter, `assignedTo="${assignedTo}"`)
@@ -82,7 +82,7 @@ export async function useFindTicketsByAssignedTo(assignedTo: string ,data: FindT
   }
 }
 
-export async function useFindTicketsByRoute(route: string ,data: FindTickets): Promise<{ total: number, rows: Ticket[] }> {
+export async function useFindTicketsByRoute(route: string, data: FindTickets): Promise<{ total: number, rows: Ticket[] }> {
   try {
     let filter = makeFilter(data)
     filter = constructQuery(filter, `route="${route}"`)
@@ -168,35 +168,57 @@ export async function useUpdateTicket(id: string, data: TicketUpdate): Promise<T
   }
 }
 
-export async function useDeleteTicket(id: string): Promise<boolean> {
-  const toast = useToast()
+export async function useUpdateTicketWhere(filter: string, data: TicketUpdate): Promise<boolean> {
   try {
     const { $pb } = useNuxtApp()
-    await $pb.collection<TicketResponse>('tickets').delete(id)
-
-    toast.add({
-      title: 'Ticket eliminado correctamente',
-      color: 'green',
+    const tickets = await $pb.collection<TicketResponse>('tickets').getFullList({
+      filter
     })
+
+    for (const ticket of tickets) {
+      await $pb.collection<TicketResponse>('tickets').update(ticket.id, data)
+    }
 
     return true
   } catch (error) {
-    console.log(error)
+    const toast = useToast()
     toast.add({
-      title: 'Error al eliminar el ticket intenta de nuevo',
+      title: 'Error al actualizar el ticket intenta de nuevo',
       color: 'red',
     })
+    console.log(error)
     return false
   }
 }
+export async function useDeleteTicket(id: string): Promise<boolean> {
+    const toast = useToast()
+    try {
+      const { $pb } = useNuxtApp()
+      await $pb.collection<TicketResponse>('tickets').delete(id)
 
-export async function subscribeTickets(callback: (ticket: Ticket, action: string) => void) {
-  const { $pb } = useNuxtApp()
-  $pb.collection<TicketResponse>('tickets').subscribe('*', (e) => {
-    callback(ticketEntityMapper(e.record), e.action)
-  },
-    {
-      expand: expand,
+      toast.add({
+        title: 'Ticket eliminado correctamente',
+        color: 'green',
+      })
+
+      return true
+    } catch (error) {
+      console.log(error)
+      toast.add({
+        title: 'Error al eliminar el ticket intenta de nuevo',
+        color: 'red',
+      })
+      return false
     }
-  )
-}
+  }
+
+  export async function subscribeTickets(callback: (ticket: Ticket, action: string) => void) {
+    const { $pb } = useNuxtApp()
+    $pb.collection<TicketResponse>('tickets').subscribe('*', (e) => {
+      callback(ticketEntityMapper(e.record), e.action)
+    },
+      {
+        expand: expand,
+      }
+    )
+  }
