@@ -40,14 +40,14 @@ onMounted(async () => {
           <UButton @click="modals.create = true" class="ml-auto">Crear</UButton>
         </div>
       </template>
-      <ZonesTable :data="zones.rows" :total="zones.total" />
+      <ZoneTable :data="zones.rows" :total="zones.total" @refresh="getZones" />
     </UCard>
     <UModal v-model="modals.create">
       <UCard class="p-4">
         <template #header>
           <h1 class="text-2xl font-bold">Crear Zona</h1>
         </template>
-        <ZonesForm @submit="submit" />
+        <ZoneForm @submit="submit" />
       </UCard>
     </UModal>
   </UContainer>

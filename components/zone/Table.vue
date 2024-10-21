@@ -1,5 +1,7 @@
 <script lang="ts" setup>
+import { ZoneModal } from '#components';
 import type { Zone } from '~/types/zones';
+const modal = useModal()
 
 const props = defineProps({
   data: {
@@ -11,6 +13,8 @@ const props = defineProps({
     default: 0
   }
 })
+
+const emit = defineEmits(['refresh'])
 
 const columns = [
   {
@@ -24,13 +28,30 @@ const columns = [
   }
 ]
 
+const items = (row: Zone) => [[
+  {
+    label: 'Editar',
+    icon: 'i-heroicons-pencil-20-solid',
+    click: () => {
+      modal.open(ZoneModal, {
+        data: row,
+        onSubmit: async (data: Zone) => {
+          await useUpdateZone(row.id,data)
+          emit('refresh')
+        }
+      })
+    }
+  }
+],
+]
+
 </script>
 
 <template>
   <UContainer>
     <UTable :rows="props.data" :columns="columns">
       <template #actions-data="{ row }">
-        <UDropdown>
+        <UDropdown :items="items(row)">
           <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid" />
         </UDropdown>
       </template>
