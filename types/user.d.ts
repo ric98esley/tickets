@@ -1,3 +1,5 @@
+import type { DepartmentResponse } from "./department";
+
 export interface Ability {
   id:       string;
   name:     string;
@@ -38,13 +40,15 @@ export interface UserResponse {
   verified:        boolean;
   expand?: {
     role: RoleResponse
+    departments: DepartmentResponse[]
   }
 }
 export interface User {
   id:              string;
   username:        string;
   name:            string;
-  role?:            Role;
+  role?:           Role;
+  departments?:     Department[];
   avatar:          string;
   email:           string;
   verified:        boolean;

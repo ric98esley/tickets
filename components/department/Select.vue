@@ -14,7 +14,7 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue', 'handleSelect'])
 
-const selected = ref<Department | null>()
+const selected = ref<Department | undefined>()
 
 const loading = ref(false)
 
@@ -30,6 +30,12 @@ watch(selected, (value) => {
   if (value) {
     emit('update:modelValue', value.id)
     emit('handleSelect', value)
+  }
+})
+
+watch(() => props.modelValue, async (value) => {
+  if (value) {
+    selected.value = await useFindOneDepartment(value)
   }
 })
 

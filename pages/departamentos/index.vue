@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import { DepartmentModal } from '#components';
 import type { Department } from '~/types';
 
-const route = useRoute()
+const modal = useModal()
 const router = useRouter()
 
 const filters = reactive({
@@ -11,7 +12,7 @@ const filters = reactive({
   page: 1,
 })
 
-const departments = reactive<{rows: Department[], total: number}>({
+const departments = reactive<{ rows: Department[], total: number }>({
   rows: [],
   total: 0,
 })
@@ -45,10 +46,15 @@ onMounted(() => {
       <template #header>
         <div class="flex justify-between">
           <h1 class="text-2xl font-bold">Departamentos</h1>
-          <UButton>Crear</UButton>
+          <UButton @click="modal.open(DepartmentModal, {
+            onSubmit: () => {
+              getDepartments()
+            }
+          })">Crear</UButton>
         </div>
       </template>
-      <DepartmentTable :data="departments.rows" :filters="filters" :total="departments.total" />
+      <DepartmentTable :data="departments.rows" :filters="filters" :total="departments.total"
+        @refresh="getDepartments" />
     </UCard>
   </UContainer>
 </template>

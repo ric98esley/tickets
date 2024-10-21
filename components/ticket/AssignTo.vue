@@ -19,15 +19,21 @@ const assignedTo = ref<User>()
 
 const state = reactive({
   assignedTo: props.assignedTo || '',
+  department: '',
 })
 
 const handlerAssignedTo = async (value: User) => {
-  if(!props.ticket) return
+  if (!props.ticket) return
   await useUpdateTicket(props.ticket, { assignedTo: state.assignedTo })
   await useCreateThread({
     ticket: props.ticket,
     content: `El usuario ${user.user?.username} ha asignado el ticket a ${value.name}`,
   })
+}
+
+const handlerSelect = (value: User) => {
+  assignedTo.value = value
+  state.department = value.departments?.[0].id || ''
 }
 
 const handlerSubmit = async () => {
@@ -40,7 +46,7 @@ const handlerSubmit = async () => {
 </script>
 
 <template>
-  <UModal>
+  <UModal prevent-close>
     <UCard>
       <template #header>
         <div class="flex justify-between">
@@ -50,7 +56,10 @@ const handlerSubmit = async () => {
       </template>
       <UForm :state="state" class="space-y-4">
         <UFormGroup name="assignedTo" label="Asignar a">
-          <UserSelect v-model="state.assignedTo" @handle-select="(value) => assignedTo = value" />
+          <UserSelect v-model="state.assignedTo" @handle-select="handlerSelect" />
+        </UFormGroup>
+        <UFormGroup v-if="assignedTo" name="department" label="Departamento">
+          <DepartmentSelect v-model="state.department" />
         </UFormGroup>
         <UButton @click="handlerSubmit">Guardar</UButton>
       </UForm>

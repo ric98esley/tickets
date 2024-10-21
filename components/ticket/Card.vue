@@ -147,13 +147,10 @@ const items = [
         </div>
       </template>
       <div class="flex flex-col" @click="navigateTo(`/tickets/${props.data.id}`)">
-
-        <h3 class="text-lg font-bold">
-          Soporte: <span class="text-primary-600 text-base"># {{ props.data?.id.toUpperCase() }}</span>
-        </h3>
-        <h3 class="text-lg font-bold">
-          Departamento: <span class="text-primary-600">{{ props.data?.department?.name }}</span>
-        </h3>
+        <h2 class="text-md font-bold">Contenido  del ticket:</h2>
+        <div v-if="props.data.content" v-html="props.data.content"
+          class="mt-4 outline-none dark:opacity-70" tabindex="0">
+        </div>
         <div class="mt-2">
           <p>
             <span class="text-sm font-light">Cliente: </span>
@@ -167,9 +164,10 @@ const items = [
               </a>
             </span>
           </p>
-        </div>
-        <div v-if="props.data.content" v-html="props.data.content"
-          class="mt-4 outline-none text-black opacity-60 dark:text-white dark:opacity-70" tabindex="0">
+          <p>
+            <span class="text-sm font-light">Departamento: </span>
+            <span class="text-sm font-semibold">{{ props.data.department?.name }}</span>
+          </p>
         </div>
       </div>
       <template #footer>
@@ -178,7 +176,12 @@ const items = [
             <UAvatar size="xs" :src="props.data?.createdBy?.avatar" alt="Avatar" class="m-2" />
             <span class="font-light text-gray-200"> {{ props.data?.createdBy?.name }}</span>
           </div>
-          <span class="text-sm text-gray-500">{{ timeSince(props.data?.createdAt) }}</span>
+          <div class="flex flex-col">
+            <span class="text-sm text-gray-500">{{ timeSince(props.data?.createdAt) }}</span>
+            <h3 class="text-xs font-light">
+              <span class="text-primary-600 text-base">#{{ props.data?.id.toUpperCase() }}</span>
+            </h3>
+          </div>
         </div>
       </template>
     </UCard>

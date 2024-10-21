@@ -37,48 +37,61 @@ const filters = computed({
   set: (value) => emit('update:filters', value)
 })
 
-const columns = [{
-  key: 'id',
-  label: 'ID',
-}, {
-  key: 'agentCode',
-  label: 'Código Agencia'
-}, {
-  key: 'customerName',
-  label: 'Nombre Cliente'
-}, {
-  key: 'phone',
-  label: 'Teléfono'
-}, {
-  key: 'status.name',
-  label: 'Estatus'
-}, {
-  key: 'content',
-  label: 'Contenido'
-},{
-  key: 'department.name',
-  label: 'Departamento'
-}, {
-  key: 'route.name',
-  label: 'Ruta'
-}, {
-  key: 'assignedTo.name',
-  label: 'Asignado a'
-}, {
-  key: 'closedAt',
-  label: 'Resuelto el'
-}, {
-  key: 'timeSince',
-  label: 'Creado el'
-}, {
-  key: 'isClosed',
-  label: 'Resuelto'
-}, {
-  key: 'actions',
-  label: 'Acciones'
-}]
+const columns = [
+  {
+    key: 'id',
+    label: 'ID',
+  },
+  {
+    key: 'agentCode',
+    label: 'Código Agencia'
+  }, {
+    key: 'customerName',
+    label: 'Nombre Cliente'
+  }, {
+    key: 'phone',
+    label: 'Teléfono'
+  }, {
+    key: 'route.name',
+    label: 'Ruta'
+  }, {
+    key: 'assignedTo.name',
+    label: 'Asignado a'
+  }, {
+    key: 'content',
+    label: 'Contenido'
+  }, {
+    key: 'isClosed',
+    label: 'Resuelto'
+  }, {
+    key: 'actions',
+    label: 'Acciones'
+  },
+  {
+    key: 'status.name',
+    label: 'Estatus'
+  },
+  {
+    key: 'department.name',
+    label: 'Departamento'
+  },
+  {
+    key: 'closedAt',
+    label: 'Resuelto el'
+  },
+  {
+    key: 'timeSince',
+    label: 'Creado el'
+  },
+  {
+    key: 'isClosed',
+    label: 'Resuelto'
+  },
+]
 
-const selectedColumns = ref([...columns])
+const selectedColumns = ref([
+  ...columns.slice(1, 9),
+])
 
 const selected = ref<Ticket[]>([])
 
@@ -177,6 +190,9 @@ const items = (row: Ticket) => [
       modal.open(TicketEdit, {
         form: ticket,
         ticket: row.id,
+        onSubmit: (form) => {
+          emit('refresh')
+        },
       })
     }
   }, {
@@ -213,22 +229,22 @@ const items = (row: Ticket) => [
       })
     }
   }], [{
-      label: 'Transferir',
-      icon: 'i-heroicons-arrow-right-20-solid',
-      click: () => {
-        modal.open(TicketTransfer, {
-          ticket: row.id,
-          department: row.department?.id ?? '',
-          onSubmit: (form: Department) => emit('refresh'),
-        })
-      }
-    }, {
-      label: 'Quitar de la ruta',
-      icon: 'i-heroicons-arrow-uturn-right-16-solid',
-      click: async () => {
-        await unassigned(row)
-      }
+    label: 'Transferir',
+    icon: 'i-heroicons-arrow-right-20-solid',
+    click: () => {
+      modal.open(TicketTransfer, {
+        ticket: row.id,
+        department: row.department?.id ?? '',
+        onSubmit: (form: Department) => emit('refresh'),
+      })
     }
+  }, {
+    label: 'Quitar de la ruta',
+    icon: 'i-heroicons-arrow-uturn-right-16-solid',
+    click: async () => {
+      await unassigned(row)
+    }
+  }
   ], [
     {
       label: 'Ver',
@@ -286,31 +302,33 @@ const actions = [
     </div>
     <UTable :rows="props.data" v-model="selected" :columns="selectedColumns">
       <template #id-header>
-        <UInput v-model="filters.id" placeholder="ID" class="w-36" />
+        <UInput v-model="filters.id" placeholder="ID" class="w-20" />
       </template>
       <template #agentCode-header>
-        <UInput v-model="filters.agentCode" placeholder="Código de agente" class="w-36" />
+        <UInput v-model="filters.agentCode" placeholder="Código de agente" class="w-20" />
       </template>
       <template #customerName-header>
-        <UInput v-model="filters.customerName" placeholder="Nombre del cliente" class="w-36" />
+        <UInput v-model="filters.customerName" placeholder="Nombre del cliente" class="w-20" />
       </template>
       <template #status.name-header>
-        <UInput v-model="filters.status" placeholder="Estatus" class="w-36" />
+        <UInput v-model="filters.status" placeholder="Estatus" class="w-20" />
       </template>
       <template #assignedTo.name-header>
-        <UInput v-model="filters.assignedTo" placeholder="Asignado a" class="w-36" />
+        <UInput v-model="filters.assignedTo" placeholder="Asignado a" class="w-20" />
       </template>
       <template #phone-header>
-        <UInput v-model="filters.phone" placeholder="Teléfono" class="w-36" />
+        <UInput v-model="filters.phone" placeholder="Teléfono" class="w-20" />
       </template>
       <template #phone-data="{ row }">
         <a class="text-primary" :href="'tel:' + row.phone">{{ row.phone }}</a>
       </template>
       <template #content-header>
-        <UInput v-model="filters.content" placeholder="Contenido" class="w-36" />
+        <UInput v-model="filters.content" placeholder="Contenido" class="w-48" />
       </template>
       <template #content-data="{ row }">
-        <div v-html="row.content" />
+        <div class="overflow-y-auto text-balance max-w-48 max-h-24">
+          <div v-html="row.content" />
+        </div>
       </template>
       <template #closedAt-data="{ row }">
         {{ row.closedAt ? dateFormattedWithTime(row.closedAt) : 'No resuelto' }}

@@ -5,6 +5,8 @@ interface FindUsers {
   total: number
 }
 
+const expand = 'role,departments'
+
 export const useFindUser = async (data: UserFind) : Promise<FindUsers>=> {
   try {
     const { $pb } = useNuxtApp()
@@ -18,7 +20,7 @@ export const useFindUser = async (data: UserFind) : Promise<FindUsers>=> {
     constructQuery(filter, `role.name~"${data.role}"`)
 
     const resultList = await $pb.collection<UserResponse>('users').getList(data.page ?? 1, data.limit ?? 100 , {
-      expand: 'role',
+      expand: expand,
       sort: 'created',
       filter
     })
@@ -44,7 +46,7 @@ export const useFindOneUser = async (id: string): Promise<User | null> => {
   try {
     const { $pb } = useNuxtApp()
     const user = await $pb.collection<UserResponse>('users').getOne(id, {
-      expand: 'role'
+      expand: expand
     })
     
     return userMapper(user)

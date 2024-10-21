@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import { DepartmentModal } from '#components';
 import type { Department, FindDepartment } from '~/types';
+
+const modal = useModal()
 
 const props = defineProps({
   data: {
@@ -47,16 +50,16 @@ const items = (row: Department) => [
     label: 'Editar',
     icon: 'i-heroicons-pencil-square-20-solid',
     click: () => {
-    }
-  }, {
-    label: 'Ver',
-    icon: 'i-heroicons-eye-20-solid',
-    click: () => {
+      modal.open(DepartmentModal, {
+        form: row,
+        department: row.id,
+        onSubmit: () => {
+          emit('refresh')
+        }
+      })
     }
   }],
 ]
-
-
 
 </script>
 

@@ -39,7 +39,7 @@ const validate = (state: TicketCreate): FormError[] => {
     errors.push({ path: 'department', message: 'El departamento es requerido' })
   }
 
-  if(!state.phone.match(regex)){
+  if (!state.phone.match(regex)) {
     errors.push({ path: 'phone', message: 'El teléfono no es válido' })
   }
 
@@ -69,9 +69,9 @@ const handleEdit = async (ticket: string) => {
     ` })
 }
 
-const handlerSubmit = () => {
+const handlerSubmit = async (event: FormSubmitEvent<TicketCreate>) => {
   if (props.ticket) {
-    handleEdit(props.ticket)
+    await handleEdit(props.ticket)
   }
   emit('submit', state)
   modal.close()
@@ -87,12 +87,12 @@ const handlerSubmit = () => {
           <UButton @click="modal.close()" icon="i-heroicons-x-mark-16-solid" variant="link" />
         </div>
       </template>
-      <UForm :state="state" :validate="validate" class="space-y-4"  @submit="handlerSubmit">
+      <UForm :state="state" :validate="validate" class="space-y-4" @submit="handlerSubmit">
         <UFormGroup label="Nombre" name="customerName">
           <UInput v-model="state.customerName" />
         </UFormGroup>
         <UFormGroup label="Teléfono" name="phone">
-          <UInput v-model="state.phone" label="Teléfono"/>
+          <UInput v-model="state.phone" label="Teléfono" />
         </UFormGroup>
         <UFormGroup label="Código de agencia" name="agentCode">
           <UInput v-model="state.agentCode" label="Código de agencia" />
@@ -112,7 +112,7 @@ const handlerSubmit = () => {
         <UFormGroup label="Contenido" name="content">
           <RichText v-model="state.content" />
         </UFormGroup>
-        <UButton key="edit_ticket" type="submit">
+        <UButton key="edit_ticket" type="submit" @click="handlerSubmit">
           Guardar
         </UButton>
       </UForm>

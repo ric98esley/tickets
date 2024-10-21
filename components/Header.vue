@@ -40,7 +40,7 @@ const links = reactive([{
   icon: 'i-heroicons-queue-list-16-solid',
   to: `/status`,
   click: () => isOpen.value = false
-},{
+}, {
   label: 'Tickets',
   icon: 'i-heroicons-ticket-solid',
   to: '/tickets',
@@ -62,6 +62,12 @@ const links = reactive([{
   label: 'Departamentos',
   icon: 'i-heroicons-building-office-2-20-solid',
   to: '/departamentos',
+  click: () => isOpen.value = false
+},
+{
+  label: 'Zonas',
+  icon: 'i-heroicons-map-20-solid',
+  to: '/zonas',
   click: () => isOpen.value = false
 }
 ])

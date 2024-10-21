@@ -1,4 +1,4 @@
-import type { Department, DepartmentResponse, FindDepartment } from "~/types";
+import type { Department, DepartmentCreate, DepartmentResponse, FindDepartment } from "~/types";
 
 export const useFindDepartments = async (data: FindDepartment): Promise<{ total: number, rows: Department[] }> => {
   try {
@@ -20,13 +20,46 @@ export const useFindDepartments = async (data: FindDepartment): Promise<{ total:
   }
 }
 
-export const useFindOneDepartment = async (id: string): Promise<Department | null> => {
+export const useFindOneDepartment = async (id: string): Promise<Department | undefined> => {
   try {
     const { $pb } = useNuxtApp();
     const department = await $pb.collection<DepartmentResponse>('departments').getOne(id);
     return departmentMapper(department);
   } catch (error) {
     console.error(error);
-    return null;
+    return undefined;
+  }
+}
+
+export const useCreateDepartment = async (data: DepartmentCreate): Promise<Department | undefined> => {
+  try {
+    const { $pb } = useNuxtApp();
+    const department = await $pb.collection<DepartmentResponse>('departments').create(data);
+    return departmentMapper(department);
+  } catch (error) {
+    console.error(error);
+    return undefined;
+  }
+}
+
+export const useUpdateDepartment = async (id: string, data: DepartmentCreate): Promise<Department | undefined> => {
+  try {
+    const { $pb } = useNuxtApp();
+    const department = await $pb.collection<DepartmentResponse>('departments').update(id, data);
+    return departmentMapper(department);
+  } catch (error) {
+    console.error(error);
+    return undefined;
+  }
+}
+
+export const useDeleteDepartment = async (id: string): Promise<boolean> => {
+  try {
+    const { $pb } = useNuxtApp();
+    await $pb.collection<DepartmentResponse>('departments').delete(id);
+    return true;
+  } catch (error) {
+    console.error(error);
+    return false;
   }
 }
