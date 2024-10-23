@@ -1,5 +1,5 @@
 import type { Agent, AgentResponse } from "./agents";
-import type { Department, DepartmentResponse } from "./department";
+import type { Department, DepartmentResponse } from "./groups";
 import type { Route, RouteResponse } from "./routes";
 import type { Status, StatusResponse } from "./status";
 import type { User, UserResponse } from "./user";

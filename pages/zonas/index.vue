@@ -36,7 +36,7 @@ onMounted(async () => {
     <UCard>
       <template #header>
         <div class="flex">
-          <h1 class="text-2xl font-bold">Status del Sistema</h1>
+          <h1 class="text-2xl font-bold">Zonas</h1>
           <UButton @click="modals.create = true" class="ml-auto">Crear</UButton>
         </div>
       </template>

@@ -17,6 +17,7 @@
     "dayjs": "^1.11.11",
     "joi": "^17.13.1",
     "nuxt": "3.12.2",
+    "nuxt-app": "file:",
     "nuxt-tiptap-editor": "^1.1.2",
     "pinia": "2.1.7",
     "pocketbase": "^0.21.3",

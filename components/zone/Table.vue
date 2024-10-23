@@ -48,7 +48,7 @@ const items = (row: Zone) => [[
 </script>
 
 <template>
-  <UContainer>
+  <div>
     <UTable :rows="props.data" :columns="columns">
       <template #actions-data="{ row }">
         <UDropdown :items="items(row)">
@@ -56,5 +56,5 @@ const items = (row: Zone) => [[
         </UDropdown>
       </template>
     </UTable>
-  </UContainer>
+  </div>
 </template>

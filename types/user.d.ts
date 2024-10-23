@@ -1,4 +1,4 @@
-import type { DepartmentResponse } from "./department";
+import type { DepartmentResponse } from "./groups";
 
 export interface Ability {
   id:       string;

@@ -53,22 +53,9 @@ const links = reactive([{
   click: () => isOpen.value = false
 },
 {
-  label: 'Usuarios',
-  icon: 'i-heroicons-users-solid',
-  to: '/usuarios',
-  click: () => isOpen.value = false
-},
-{
-  label: 'Departamentos',
+  label: 'Agencias',
   icon: 'i-heroicons-building-office-2-20-solid',
-  to: '/departamentos',
-  click: () => isOpen.value = false
-},
-{
-  label: 'Zonas',
-  icon: 'i-heroicons-map-20-solid',
-  to: '/zonas',
-  click: () => isOpen.value = false
+  to: '/agencias',
 }
 ])
 
@@ -78,7 +65,31 @@ const items = [
     avatar: {
       src: `https://avatar.iran.liara.run/username?username=${username.value}&size=64`,
     }
-  }], [{
+  }], [
+    {
+      label: 'Zonas',
+      icon: 'i-heroicons-map-20-solid',
+      to: '/zonas',
+      click: () => isOpen.value = false
+    },
+    {
+      label: 'Grupos',
+      icon: 'i-heroicons-rectangle-group-solid',
+      to: '/grupos',
+    },
+    {
+      label: 'Usuarios',
+      icon: 'i-heroicons-users-solid',
+      to: '/usuarios',
+      click: () => isOpen.value = false
+    },
+    {
+      label: 'Departamentos',
+      icon: 'i-heroicons-building-office-2-20-solid',
+      to: '/departamentos',
+      click: () => isOpen.value = false
+    },
+  ], [{
     label: 'Mis tickets',
     icon: 'i-heroicons-pencil-square-20-solid',
     click: () => {

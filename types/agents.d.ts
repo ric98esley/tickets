@@ -1,8 +1,8 @@
-import type { Receptor } from "./receptor";
+import type { Group, GroupResponse } from "./groups";
 import type { Zone, ZoneResponse } from "./zones";
 
 interface Expand {
-  receptor: ReceptorResponse;
+  group:    GroupResponse;
   zone:     ZoneResponse;
 }
 
@@ -16,7 +16,7 @@ export interface AgentResponse {
   code:           string;
   phone:          string;
   inChargeOf:     string;
-  receptor:       string;
+  group:          string;
   zone:           string;
   facade:         string[];
   expand?:        Expand;
@@ -28,9 +28,43 @@ export interface Agent {
   code:           string;
   phone:          string;
   inChargeOf:     string;
-  receptor:       Receptor;
-  zone:           Zone;
+  group?:          Group;
+  zone?:           Zone;
   facade:         string[];
   created:        Date;
   updated:        Date;
+}
+
+export interface AgentCreate {
+  name:           string;
+  code:           string;
+  phone:          string;
+  inChargeOf:     string;
+  group:          string;
+  zone:           string;
+  facade:         string[];
+}
+
+export interface AgentUpdate {
+  name:           string;
+  code:           string;
+  phone:          string;
+  inChargeOf:     string;
+  group:          string;
+  zone:           string;
+  facade:         string[];
+}
+
+export interface AgentFind {
+  name?:          string;
+  code?:          string;
+  phone?:         string;
+  inChargeOf?:    string;
+  group?:         string;
+  zone?:          string;
+  facade?:        string;
+  created?:       Date;
+  updated?:       Date;
+  limit?:         number;
+  page?:          number;
 }

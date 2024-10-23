@@ -4,7 +4,7 @@ interface Expand {
   manager: UserResponse;
 }
 
-export interface ReceptorResponse {
+export interface GroupResponse {
   id:             string;
   collectionId:   string;
   collectionName: string;
@@ -17,12 +17,32 @@ export interface ReceptorResponse {
   expand?:        Expand;
 }
 
-export interface Receptor {
+
+export interface Group {
   id:             string;
   name:           string;
   code:           string;
   phone:          string;
-  manager:        User;
+  manager?:       User;
   created:        Date;
   updated:        Date;
 }
+
+export interface GroupCreate {
+  name:           string;
+  code:           string;
+  phone:          string;
+  manager:        string;
+}
+
+export interface GroupUpdate {
+  name?:          string | null;
+}
+
+export interface FindGroup {
+  limit?:          number;
+  page?:         number;
+  name?:          string;
+}
+
+
