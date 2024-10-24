@@ -50,7 +50,7 @@ export const useFindAgents = async (data: AgentFind): Promise<FoundAgents> => {
   }
 }
 
-export const useFindAgentById = async (id: string): Promise<Agent | undefined> => {
+export const useFindOneAgent = async (id: string): Promise<Agent | undefined> => {
   try {
     const { $pb } = useNuxtApp();
     const res = await $pb.collection<AgentResponse>('agents').getOne(id, {

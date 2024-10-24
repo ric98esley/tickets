@@ -1,11 +1,13 @@
 import type { RouteResponse, Route, RouteCreate, RouteUpdate } from "~/types";
 
+const expand = 'assignedTo,createdBy,zone';
+
 export const useFindRoutes = async (): Promise<{ total: number, rows: Route[] }> => {
   try {
     const { $pb } = useNuxtApp();
     const routes = await $pb.collection<RouteResponse>('routes').getList(1, 0, {
       sort: '-created',
-      expand: 'assignedTo,createdBy'
+      expand
     });
 
     return {
@@ -23,7 +25,7 @@ export const useFindOneRoute = async (id: string): Promise<Route | undefined> =>
   try {
     const { $pb } = useNuxtApp();
     const route = await $pb.collection<RouteResponse>('routes').getOne(id, {
-      expand: 'assignedTo,createdBy'
+      expand
     });
 
     return routeMapper(route);
@@ -45,7 +47,7 @@ export const useCreateRoute = async (data: RouteCreate): Promise<Route | null> =
         ...data,
         createdBy: userStore.user?.id
       }, {
-        expand: 'assignedTo,createdBy'
+        expand
       });
 
 
@@ -72,7 +74,7 @@ export const useUpdateRoute = async (id: string, data: RouteUpdate): Promise<Rou
   try {
     const { $pb } = useNuxtApp();
     const route = await $pb.collection<RouteResponse>('routes').update(id, data, {
-      expand: 'assignedTo,createdBy'
+      expand
     });
 
     toast.add({

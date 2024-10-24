@@ -3,25 +3,26 @@ import { timeSince } from "./date-format";
 
 export const ticketEntityMapper = (data: TicketResponse): Ticket => {
   let createdBy = undefined
+  let agent = undefined
   let assignedTo = undefined
   let status = undefined
   let route = undefined
   let department = undefined
 
-  if (data.expand.createdBy) createdBy = userMapper(data.expand.createdBy)
-  if (data.expand.assignedTo) assignedTo = userMapper(data.expand.assignedTo)
-  if (data.expand.status) status = statusMapper(data.expand.status)
-  if (data.expand.route) route = routeMapper(data.expand.route)
-  if (data.expand.department) department = departmentMapper(data.expand.department)
+  if (data.expand?.createdBy) createdBy = userMapper(data.expand.createdBy)
+  if (data.expand?.agent) agent = agentMapper(data.expand.agent)
+  if (data.expand?.assignedTo) assignedTo = userMapper(data.expand.assignedTo)
+  if (data.expand?.status) status = statusMapper(data.expand.status)
+  if (data.expand?.route) route = routeMapper(data.expand.route)
+  if (data.expand?.department) department = departmentMapper(data.expand.department)
   return {
     id: data.id,
-    customerName: data.customerName,
     phone: data.phone,
     createdBy,
     assignedTo,
     status,
     department,
-    agentCode: data.agentCode,
+    agent: agent,
     conversationId: data.conversationId,
     senderId: data.senderId,
     content: data.content,

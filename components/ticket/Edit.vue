@@ -22,13 +22,10 @@ const validate = (state: TicketCreate): FormError[] => {
   var regex = /^(\(\+?\d{2,3}\)[\*|\s|\-|\.]?(([\d][\*|\s|\-|\.]?){6})(([\d][\s|\-|\.]?){2})?|(\+?[\d][\s|\-|\.]?){8}(([\d][\s|\-|\.]?){2}(([\d][\s|\-|\.]?){2})?)?)$/;
 
   const errors = []
-  if (!state.customerName) {
-    errors.push({ path: 'customerName', message: 'El nombre del cliente es requerido' })
-  }
   if (!state.phone) {
     errors.push({ path: 'phone', message: 'El teléfono es requerido' })
   }
-  if (!state.agentCode) {
+  if (!state.agent) {
     errors.push({ path: 'agentCode', message: 'El código de agencia es requerido' })
   }
   if (!state.status) {
@@ -47,9 +44,9 @@ const validate = (state: TicketCreate): FormError[] => {
 }
 
 const state = reactive({
-  customerName: props.form.customerName,
   phone: props.form.phone,
-  agentCode: props.form.agentCode,
+  agent: props.form.agent,
+  status: props.form.status,
   conversationId: props.form.conversationId,
   senderId: props.form.senderId,
   content: props.form.content,
@@ -61,9 +58,8 @@ const handleEdit = async (ticket: string) => {
     ticket, content: `
     <p>El ticket ha sido editado por ${user?.username}</p>
     <p>Contenido: ${data?.content}</p>
-    <p>Nombre: ${props.form.customerName} => ${data?.customerName}</p>
     <p>Teléfono: ${props.form.phone} => ${data?.phone}</p>
-    <p>Código de agencia: ${props.form.agentCode} => ${data?.agentCode}</p>
+    <p>Agencia: ${data?.agent?.code}</p>
     <p>ID de conversación: ${props.form.conversationId} => ${data?.conversationId}</p>
     <p>ID del remitente: ${props.form.senderId} => ${data?.senderId}</p>
     ` })
@@ -88,14 +84,11 @@ const handlerSubmit = async (event: FormSubmitEvent<TicketCreate>) => {
         </div>
       </template>
       <UForm :state="state" :validate="validate" class="space-y-4" @submit="handlerSubmit">
-        <UFormGroup label="Nombre" name="customerName">
-          <UInput v-model="state.customerName" />
-        </UFormGroup>
         <UFormGroup label="Teléfono" name="phone">
           <UInput v-model="state.phone" label="Teléfono" />
         </UFormGroup>
         <UFormGroup label="Código de agencia" name="agentCode">
-          <UInput v-model="state.agentCode" label="Código de agencia" />
+          <UInput v-model="state.agent" label="Código de agencia" />
         </UFormGroup>
         <div class="columns-2">
           <div>

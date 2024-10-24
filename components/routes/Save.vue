@@ -1,40 +1,36 @@
 <script setup lang="ts">
 import Joi from 'joi'
 import type { FormSubmitEvent } from '#ui/types'
-import type { RouteCreate } from '~/types';
+import type { Route, RouteCreate } from '~/types';
 
 const props = defineProps({
   form: {
     type: Object as PropType<RouteCreate>,
-    default: () => ({ name: '', assignedTo: '', started: '' })
+    default: () => ({ name: '', assignedTo: '', started: '', zone: ''})
   }
 })
 
-const schema = Joi.object({
-  name: Joi.string().required().min(3).max(30)
-    .messages({
-      'string.base': 'El nombre debe ser un texto',
-      'string.empty': 'El nombre no puede estar vacío',
-      'string.min': 'El nombre debe tener al menos {#limit} caracteres',
-      'string.max': 'El nombre no puede tener más de {#limit} caracteres',
-      'any.required': 'El nombre es requerido'
-    }),
-  assignedTo: Joi.string().required()
-    .messages({
-      'string.base': 'El asignado debe ser un texto',
-      'string.empty': 'El asignado no puede estar vacío',
-      'any.required': 'El asignado es requerido'
-    }),
-  started: Joi.date().required()
-    .messages({
-      'date.base': 'La fecha de inicio debe ser una fecha',
-      'any.required': 'La fecha de inicio es requerida'
-    }),
-  tickets: Joi.array().items(Joi.object()).required()
-})
+// const schema = Joi.object({
+//   zone: Joi.string().required().messages({
+//     'string.base': 'La zona debe ser un texto',
+//     'string.empty': 'La zona no puede estar vacía',
+//     'any.required': 'La zona es requerida'
+//   }),
+//   assignedTo: Joi.string().required()
+//     .messages({
+//       'string.base': 'El asignado debe ser un texto',
+//       'string.empty': 'El asignado no puede estar vacío',
+//       'any.required': 'El asignado es requerido'
+//     }),
+//   started: Joi.date().required()
+//     .messages({
+//       'date.base': 'La fecha de inicio debe ser una fecha',
+//       'any.required': 'La fecha de inicio es requerida'
+//     }),
+// })
 
 const form = ref<RouteCreate>({
-  name: props.form.name,
+  zone: props.form.zone,
   assignedTo: props.form.assignedTo,
   started: props.form.started,
   tickets: []
@@ -44,21 +40,19 @@ const emit = defineEmits({
   submit: (data: RouteCreate) => true
 })
 
-const submit = (event: FormSubmitEvent<any>) => {
+const onSubmit = (event: FormSubmitEvent<RouteCreate>) => {
+  console.log('submit', event.data)
   emit('submit', event.data)
 }
 </script>
 
 <template>
-  <UForm :state="form" class="space-y-4" :schema="schema" @submit="submit">
-    <UFormGroup label="Nombre" name="name">
-      <UInput v-model="form.name" label="Nombre" />
-    </UFormGroup>
+  <UForm :state="form" class="space-y-4"  @submit="onSubmit">
     <UFormGroup label="Asignar a" name="assignedTo">
       <UserSelect v-model="form.assignedTo" />
     </UFormGroup>
-    <UFormGroup label="Tickets" name="tickets">
-      <TicketSelect v-model="form.tickets" :filter-by="(value) => value.route == undefined" />
+    <UFormGroup label="Zona" name="zone">
+      <ZoneSelect v-model="form.zone" />
     </UFormGroup>
     <UFormGroup label="Fecha inicio" name="started">
       <UPopover :popper="{ placement: 'bottom-start' }">

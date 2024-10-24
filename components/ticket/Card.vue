@@ -1,13 +1,8 @@
 <script setup lang="ts">
 import { TicketAssignTo, TicketChangeStatus, TicketDelete, TicketEdit, TicketModalResolve, TicketTransfer } from "#components";
-import type { Department, Ticket, TicketCreate, TicketResolve } from "~/types";
+import type { Ticket } from "~/types";
 
 const modal = useModal()
-
-const modals = reactive({
-  update: false,
-  resolve: false,
-})
 
 const props = defineProps(
   {
@@ -17,19 +12,6 @@ const props = defineProps(
     },
   }
 )
-
-const ticketToEdit = ref<TicketCreate>({
-  id: props.data.id,
-  customerName: props.data.customerName,
-  phone: props.data.phone,
-  assignedTo: props.data.assignedTo?.id ?? '',
-  department: props.data.department?.id ?? '',
-  status: props.data.status?.id ?? '',
-  agentCode: props.data.agentCode,
-  conversationId: props.data.conversationId,
-  senderId: props.data.senderId,
-  content: '',
-})
 
 const unassigned = async (row: Ticket) => {
   if (!row.id) return
@@ -44,9 +26,8 @@ const items = [
     icon: 'i-heroicons-pencil-square-20-solid',
     click: () => {
       const ticket = {
-        customerName: props.data.customerName,
         phone: props.data.phone,
-        agentCode: props.data.agentCode,
+        agent: props.data.agent?.id ?? '',
         conversationId: props.data.conversationId,
         senderId: props.data.senderId,
         content: props.data.content,
@@ -132,7 +113,7 @@ const items = [
         <div class="flex items-center justify-between h-16">
           <div @click="navigateTo(`/tickets/${props.data.id}`)"
             class="flex justify-between items-center overflow-hidden w-full">
-            <span class="text-lg md:text-2xl lg:text-2xl font-semibold">{{ props.data?.agentCode }}</span>
+            <span class="text-lg md:text-2xl lg:text-2xl font-semibold">{{ props.data?.agent?.code }}</span>
             <UBadge class="flex items-center text-center p-2 overflow-hidden max-w-40"
               :style="{ ['background-color']: props.data.status?.color }">
               {{ props.data.status?.name }}
@@ -147,14 +128,14 @@ const items = [
         </div>
       </template>
       <div class="flex flex-col" @click="navigateTo(`/tickets/${props.data.id}`)">
-        <h2 class="text-md font-bold">Contenido  del ticket:</h2>
-        <div v-if="props.data.content" v-html="props.data.content"
-          class="mt-4 outline-none dark:opacity-70" tabindex="0">
+        <h2 class="text-md font-bold">Motivo:</h2>
+        <div v-if="props.data.content" v-html="props.data.content" class="mt-4 outline-none dark:opacity-70"
+          tabindex="0">
         </div>
         <div class="mt-2">
           <p>
             <span class="text-sm font-light">Cliente: </span>
-            <span class="text-sm font-semibold">{{ props.data.customerName }}</span>
+            <span class="text-sm font-semibold">{{ props.data.agent?.inChargeOf }}</span>
           </p>
           <p>
             <span class="text-sm font-light">Teléfono: </span>

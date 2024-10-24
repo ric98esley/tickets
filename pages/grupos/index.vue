@@ -6,10 +6,6 @@ const modal = useModal()
 const route = useRoute()
 const router = useRouter()
 
-const modals = reactive({
-  create: false
-})
-
 const groups = reactive<{
   rows: Group[]
   total: number

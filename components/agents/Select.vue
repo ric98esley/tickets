@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import type { Agent } from '~/types/agents';
 
-
 const props = defineProps<{
   modelValue: string;
 }>();
@@ -29,8 +28,19 @@ const getAgents = async (query: string) => {
   return res.rows;
 };
 
+watch(agent, (value) => {
+  if (value) {
+    emit('update:modelValue', value.id);
+  }
+});
 
+onMounted(async () => {
+  await getAgents('');
 
+  if (props.modelValue) {
+    agent.value = await useFindOneAgent(props.modelValue);
+  }
+});
 </script>
 
 <template>

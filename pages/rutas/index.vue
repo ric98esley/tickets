@@ -9,7 +9,6 @@ const modals = reactive({
 
 const filters = reactive<RouteFind>({
   id: route.query.id as string || undefined,
-  name: route.query.name as string || undefined,
   limit: Number(route.query.limit) || 10,
   page: Number(route.query.page) || 1
 })

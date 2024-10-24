@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { TicketAssignTo, TicketChangeStatus, TicketDelete, TicketEdit, TicketModal, TicketModalResolve, TicketTransfer } from "#components";
-import type { Department, FindTickets, Ticket, TicketCreate, TicketResolve } from "~/types";
+import type { Department, FindTickets, Ticket, TicketResolve } from "~/types";
 
 const modal = useModal()
 
@@ -14,9 +14,9 @@ const props = defineProps({
     default: () => ({
       limit: Number,
       page: Number,
-      agentCode: String,
+      agent: String,
       assignedTo: String,
-      customerName: String,
+      zone: String,
       status: String,
     })
   },
@@ -43,11 +43,8 @@ const columns = [
     label: 'ID',
   },
   {
-    key: 'agentCode',
+    key: 'agent.code',
     label: 'Código Agencia'
-  }, {
-    key: 'customerName',
-    label: 'Nombre Cliente'
   }, {
     key: 'phone',
     label: 'Teléfono'
@@ -63,13 +60,18 @@ const columns = [
   }, {
     key: 'isClosed',
     label: 'Resuelto'
-  }, {
-    key: 'actions',
-    label: 'Acciones'
   },
   {
     key: 'status.name',
     label: 'Estatus'
+  },
+  {
+    key: 'actions',
+    label: 'Acciones'
+  },
+  {
+    key: 'agent.zone.name',
+    label: 'Zona'
   },
   {
     key: 'department.name',
@@ -82,10 +84,6 @@ const columns = [
   {
     key: 'timeSince',
     label: 'Creado el'
-  },
-  {
-    key: 'isClosed',
-    label: 'Resuelto'
   },
 ]
 
@@ -177,9 +175,8 @@ const items = (row: Ticket) => [
     icon: 'i-heroicons-pencil-square-20-solid',
     click: () => {
       const ticket = {
-        customerName: row.customerName,
         phone: row.phone,
-        agentCode: row.agentCode,
+        agent: row.agent?.code ?? '',
         conversationId: row.conversationId,
         senderId: row.senderId,
         content: row.content,
@@ -278,6 +275,10 @@ const actions = [
   { label: 'Asignar a', value: 'assign' },
   { label: 'Transferir', value: 'transfer' },
 ]
+
+watch(selected, (value) => {
+  if (value.length === 0) emit('update:selected', selected.value)
+})
 </script>
 
 <template>
@@ -305,10 +306,7 @@ const actions = [
         <UInput v-model="filters.id" placeholder="ID" class="w-20" />
       </template>
       <template #agentCode-header>
-        <UInput v-model="filters.agentCode" placeholder="Código de agente" class="w-20" />
-      </template>
-      <template #customerName-header>
-        <UInput v-model="filters.customerName" placeholder="Nombre del cliente" class="w-20" />
+        <UInput v-model="filters.agent" placeholder="Código de agente" class="w-20" />
       </template>
       <template #status.name-header>
         <UInput v-model="filters.status" placeholder="Estatus" class="w-20" />
@@ -343,6 +341,9 @@ const actions = [
         <UDropdown :items="items(row)">
           <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid" />
         </UDropdown>
+      </template>
+      <template #agent.zone.name-header>
+        <UInput v-model="filters.zone" placeholder="Zona" class="w-20" />
       </template>
     </UTable>
     <Pagination :total="props.total" v-model:page="filters.page" v-model:limit="filters.limit" />

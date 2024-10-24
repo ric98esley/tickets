@@ -30,11 +30,11 @@ export interface TicketResponse {
   assignedTo: string;
   department: string;
   content: string;
+  expand?: Expand;
 }
 
 export interface Ticket {
   id: string;
-  customerName: string;
   senderId: number;
   conversationId: number;
   phone: string;
@@ -44,7 +44,6 @@ export interface Ticket {
   department?: Department;
   content: string;
   status?: Status;
-  agentCode: string;
   isClosed: boolean;
   timeSince?: string;
   route?: Route;
@@ -89,15 +88,14 @@ export interface FindTickets {
   page?: number;
   limit?: number;
   sort?: string;
-  customerName?: string;
   phone?: string;
-  email?: string;
   createdBy?: string;
   assignedTo?: string;
   department?: string;
   content?: string;
   status?: string;
-  agentCode?: string;
+  zone?: string;
+  agent?: string;
   conversationId?: number;
   senderId?: number;
   isClosed?: boolean | string;

@@ -1,7 +1,9 @@
 import type { Ticket, TicketResponse } from "./tickets";
 import type { User, UserResponse } from "./user";
+import type { Zone, ZoneResponse } from "./zones";
 
 interface Expand {
+  zone?: ZoneResponse;
   createdBy?: UserResponse;
   assignedTo?: UserResponse;
 }
@@ -12,7 +14,6 @@ export interface RouteResponse {
   collectionName: string;
   created: Date;
   updated: Date;
-  name: string;
   assignedTo: string;
   createdBy: string;
   closed: Date;
@@ -25,6 +26,7 @@ export interface Route {
   name: string;
   assignedTo?: User;
   createdBy?: User;
+  zone?: Zone;
   tickets: Ticket[];
   closed: Date;
   started: Date;
@@ -36,7 +38,6 @@ export interface RouteFind {
   limit?: number;
   page?: number;
   id?: string;
-  name?: string;
   assignedTo?: string;
   createdBy?: string;
   closed?: Date;
@@ -45,14 +46,13 @@ export interface RouteFind {
 }
 
 export interface RouteCreate {
-  name: string;
+  zone: string;
   assignedTo: string;
   started: string;
   tickets: Ticket[];
 }
 
 export interface RouteUpdate {
-  name?: string;
   assignedTo?: string;
   started?: string;
   closed?: string;

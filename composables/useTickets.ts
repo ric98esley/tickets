@@ -1,13 +1,13 @@
 import type { FindTickets, Ticket, TicketCreate, TicketResponse, TicketUpdate } from "~/types"
 import { ticketEntityMapper } from "~/utils/ticket-map"
 
-const expand = 'createdBy,assignedTo,status,department,route'
+const expand = 'createdBy,assignedTo,status,department,route,agent,agent.zone'
 
 function makeFilter(data: FindTickets): string {
   let filter = ''
   if (data.id) filter = constructQuery(filter, `id~"${data.id}"`)
-  if (data.agentCode) filter = constructQuery(filter, `agentCode~"${data.agentCode}"`)
-  if (data.customerName) filter = constructQuery(filter, `customerName~"${data.customerName}"`)
+  if (data.agent) filter = constructQuery(filter, `(agent.code~"${data.agent}" || agent.name~"${data.agent}")`)
+  if (data.zone) filter = constructQuery(filter, `agent.zone.name~"${data.zone}"`)
   if (data.createdBy) filter = constructQuery(filter, `createdBy.username~"${data.createdBy}"`)
   if (data.assignedTo) filter = constructQuery(filter, `assignedTo.username~"${data.assignedTo}"`)
   if (data.department) filter = constructQuery(filter, `department.name~"${data.department}"`)
