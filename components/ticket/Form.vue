@@ -5,7 +5,7 @@ import type { TicketCreate } from '~/types';
 const props = defineProps({
   form: {
     type: Object as PropType<TicketCreate>,
-    default: () => ({ customerName: '', phone: '', assignedTo: '', status: '', agentCode: '', department: '', conversationId: undefined, senderId: undefined, content: '' })
+    default: () => ({ agent: '', phone: '', assignedTo: '', status: '', agentCode: '', department: '', conversationId: undefined, senderId: undefined, content: '' })
   }
 })
 
@@ -20,14 +20,11 @@ const validate = (state: TicketCreate): FormError[] => {
   var regex = /^(\(\+?\d{2,3}\)[\*|\s|\-|\.]?(([\d][\*|\s|\-|\.]?){6})(([\d][\s|\-|\.]?){2})?|(\+?[\d][\s|\-|\.]?){8}(([\d][\s|\-|\.]?){2}(([\d][\s|\-|\.]?){2})?)?)$/;
 
   const errors = []
-  if (!state.customerName) {
-    errors.push({ path: 'customerName', message: 'El nombre del cliente es requerido' })
+  if (!state.agent) {
+    errors.push({ path: 'agent', message: 'El nombre del cliente es requerido' })
   }
   if (!state.phone) {
     errors.push({ path: 'phone', message: 'El teléfono es requerido' })
-  }
-  if (!state.agentCode) {
-    errors.push({ path: 'agentCode', message: 'El código de agencia es requerido' })
   }
   if (!state.status) {
     errors.push({ path: 'status', message: 'El status es requerido' })
@@ -37,21 +34,22 @@ const validate = (state: TicketCreate): FormError[] => {
     errors.push({ path: 'department', message: 'El departamento es requerido' })
   }
 
-  if(!state.phone.match(regex)){
+  if (!state.phone.match(regex)) {
     errors.push({ path: 'phone', message: 'El teléfono no es válido' })
   }
 
   return errors
 }
 
-const state = reactive<{
-  form: TicketCreate
-  loading: boolean
-  error: any
-}>({
-  form: props.form,
-  loading: false,
-  error: null,
+const form = reactive<TicketCreate>({
+  agent: props.form.agent || '',
+  phone: props.form.phone || '',
+  assignedTo: props.form.assignedTo || '',
+  status: props.form.status || '',
+  department: props.form.department  || '',
+  conversationId: props.form.conversationId || 0,
+  senderId: props.form.senderId || 0,
+  content: props.form.content || '',
 })
 
 const submit = (event: FormSubmitEvent<TicketCreate>) => {
@@ -63,39 +61,36 @@ const submit = (event: FormSubmitEvent<TicketCreate>) => {
 </script>
 
 <template>
-  <UForm :validate="validate" :state="state.form" class="space-y-4" @submit="submit">
-    <UFormGroup label="Nombre" name="customerName">
-      <UInput v-model="state.form.customerName" />
-    </UFormGroup>
+  <UForm :validate="validate" :state="form" class="space-y-4" @submit="submit">
     <UFormGroup label="Teléfono" name="phone">
-      <UInput v-model="state.form.phone" label="Teléfono" />
+      <UInput v-model="form.phone" label="Teléfono" />
     </UFormGroup>
     <UFormGroup label="Código de agencia" name="agentCode">
-      <UInput v-model="state.form.agentCode" label="Código de agencia" />
+      <AgentsSelect v-model="form.agent" />
     </UFormGroup>
     <UFormGroup label="Status" name="status">
-      <StatusSelect v-model="state.form.status" />
+      <StatusSelect v-model="form.status" />
     </UFormGroup>
     <UFormGroup label="Departamento" name="department">
-      <DepartmentSelect v-model="state.form.department" />
+      <DepartmentSelect v-model="form.department" />
     </UFormGroup>
     <UFormGroup label="Asignar a" name="assignedTo">
-      <UserSelect v-model="state.form.assignedTo!" />
+      <UserSelect v-model="form.assignedTo!" />
     </UFormGroup>
     <div class="columns-2">
       <div>
         <UFormGroup label="ID de conversación" name="conversationId">
-          <UInput v-model="state.form.conversationId" type="number" label="ID de conversación" />
+          <UInput v-model="form.conversationId" type="number" label="ID de conversación" />
         </UFormGroup>
       </div>
       <div>
         <UFormGroup label="ID del remitente" name="senderId">
-          <UInput v-model="state.form.senderId" type="number" label="ID del remitente" />
+          <UInput v-model="form.senderId" type="number" label="ID del remitente" />
         </UFormGroup>
       </div>
     </div>
     <UFormGroup label="Contenido" name="content">
-      <RichText v-model="state.form.content" />
+      <RichText v-model="form.content" />
     </UFormGroup>
     <UButton :disable="disabledSubmit" key="save_ticket" type="submit">
       Guardar

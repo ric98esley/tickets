@@ -53,18 +53,16 @@ export interface Ticket {
   updatedAt: Date;
 }
 
-export interface CreateTicket {
+export interface TicketCreate {
   phone: string;
   agent: string;
-  createdBy: string;
   status: string;
   conversationId: number;
   senderId: number;
   isClosed?: boolean;
   closedAt?: Date;
-  route: string;
   assignedTo?: string;
-  department?: string;
+  department: string;
   content: string;
 }
 

@@ -45,7 +45,6 @@ export interface AgentCreate {
   group:          string;
   address:        string;
   zone:           string;
-  facade:         string[];
 }
 
 export interface AgentUpdate {
@@ -62,6 +61,7 @@ export interface AgentUpdate {
 export interface AgentFind {
   name?:          string;
   code?:          string;
+  query?:         string;
   phone?:         string;
   inChargeOf?:    string;
   address?:       string;

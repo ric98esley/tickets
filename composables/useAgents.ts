@@ -7,12 +7,34 @@ interface FoundAgents {
 
 const expand = 'group,zone';
 
+const makeFilter = (data: AgentFind): string => {
+  let filters = '';
+
+  if (data.name) filters = constructQuery(filters, `name~"${data.name}"`);
+  if (data.code) filters = constructQuery(filters, `code~"${data.code}"`);
+
+  if (data.query) filters = constructQuery(filters, `name~"${data.query}" || code~"${data.query}"`);
+
+  if (data.phone) filters = constructQuery(filters, `phone="${data.phone}"`);
+  if (data.inChargeOf) filters = constructQuery(filters, `inChargeOf="${data.inChargeOf}"`);
+  if (data.address) filters = constructQuery(filters, `address~"${data.address}"`);
+  if (data.group) filters = constructQuery(filters, `group.name~"${data.group}" `);
+  if (data.zone) filters = constructQuery(filters, `zone.name~"${data.zone}"`);
+
+  return filters;
+}
+
+
 export const useFindAgents = async (data: AgentFind): Promise<FoundAgents> => {
   try {
+
+    const filter = makeFilter(data);
+
     const { $pb } = useNuxtApp();
     const res = await $pb.collection<AgentResponse>('agents').getList(data.page ?? 1, data.limit ?? 10, {
       sort: '-created',
-      expand
+      expand,
+      filter
     });
 
 
