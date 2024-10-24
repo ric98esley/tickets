@@ -10,6 +10,7 @@ export const agentMapper = (res: AgentResponse): Agent => {
     name: res.name,
     code: res.code,
     phone: res.phone,
+    address: res.address,
     inChargeOf: res.inChargeOf,
     group: group,
     zone: zone,

@@ -15,6 +15,7 @@ export interface AgentResponse {
   name:           string;
   code:           string;
   phone:          string;
+  address:        string;
   inChargeOf:     string;
   group:          string;
   zone:           string;
@@ -27,9 +28,10 @@ export interface Agent {
   name:           string;
   code:           string;
   phone:          string;
+  address:        string;
   inChargeOf:     string;
-  group?:          Group;
-  zone?:           Zone;
+  group?:         Group;
+  zone?:          Zone;
   facade:         string[];
   created:        Date;
   updated:        Date;
@@ -41,6 +43,7 @@ export interface AgentCreate {
   phone:          string;
   inChargeOf:     string;
   group:          string;
+  address:        string;
   zone:           string;
   facade:         string[];
 }
@@ -49,6 +52,7 @@ export interface AgentUpdate {
   name:           string;
   code:           string;
   phone:          string;
+  address:        string;
   inChargeOf:     string;
   group:          string;
   zone:           string;
@@ -60,6 +64,7 @@ export interface AgentFind {
   code?:          string;
   phone?:         string;
   inChargeOf?:    string;
+  address?:       string;
   group?:         string;
   zone?:          string;
   facade?:        string;

@@ -14,6 +14,7 @@ const modal = useModal();
 
 const handlerSubmit = (data: ZoneCreate) => {
   emit('submit', data);
+  console.log(data);
   modal.close();
 };
 

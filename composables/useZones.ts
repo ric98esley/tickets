@@ -8,7 +8,7 @@ interface FindZones {
 export const useFindZones = async (): Promise<FindZones> => {
   try {
     const { $pb } = useNuxtApp()
-    const zones = await $pb.collection<ZoneResponse>('zones').getList(1, 100)
+    const zones = await $pb.collection<ZoneResponse>('zones').getList(1, 200)
 
     return {
       rows: zones.items.map(zoneMapper),

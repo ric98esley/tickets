@@ -1,5 +1,8 @@
 <script lang="ts" setup>
-import type { Agent, AgentFind } from '~/types/agents';
+import { AgentsModal } from '#components';
+import type { Agent, AgentCreate, AgentFind } from '~/types/agents';
+
+const modal = useModal()
 
 const props = defineProps({
   data: {
@@ -58,7 +61,24 @@ const items = (row: Agent) => [
   [{
     label: 'Editar',
     icon: 'i-heroicons-pencil-20-solid',
-    onClick: () => console.log('Edit', row),
+    click: () => {
+      modal.open(AgentsModal, {
+        form: {
+          name: row.name,
+          code: row.code,
+          phone: row.phone,
+          address: row.address,
+          inChargeOf: row.inChargeOf,
+          group: row.group?.id || '',
+          zone: row.zone?.id || '',
+          facade: row.facade,
+        },
+        onSubmit: async (data: AgentCreate) => {
+          await useUpdateAgent(row.id, data);
+          emit('refresh');
+        },
+      })
+    },
   },
   {
     label: 'Eliminar',
