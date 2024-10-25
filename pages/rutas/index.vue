@@ -2,6 +2,7 @@
 import type { Route, RouteCreate, RouteFind } from '~/types';
 
 const route = useRoute()
+const router = useRouter()
 
 const modals = reactive({
   add: false
@@ -48,7 +49,7 @@ onMounted(async () => {
         <div class="flex justify-between">
           <h1 class="text-2xl font-bold">Rutas</h1>
           <div class="flex flex-col md:flex-row gap-2">
-            <UButton @click="modals.add = true" color="primary">Nueva Ruta</UButton>
+            <UButton @click="router.push('/rutas/crear')" color="primary">Nueva Ruta</UButton>
           </div>
         </div>
       </template>

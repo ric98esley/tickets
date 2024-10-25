@@ -1,7 +1,7 @@
 import type { FindTickets, Ticket, TicketCreate, TicketResponse, TicketUpdate } from "~/types"
 import { ticketEntityMapper } from "~/utils/ticket-map"
 
-const expand = 'createdBy,assignedTo,status,department,route,agent,agent.zone'
+const expand = 'createdBy,assignedTo,status,department,route,route.zone,agent,agent.zone'
 
 function makeFilter(data: FindTickets): string {
   let filter = ''
@@ -111,6 +111,21 @@ export async function useFindTicketsByRoute(route: string, data: FindTickets): P
   }
 }
 
+export async function useFindAllTicketByRoute(routeId: string): Promise<Ticket[]> {
+  try {
+    const { $pb } = useNuxtApp()
+    const tickets = await $pb.collection<TicketResponse>('tickets').getFullList({
+      filter: `route="${routeId}"`,
+      expand
+    })
+
+    return tickets.map(ticketEntityMapper)
+  } catch (error) {
+    console.log(error)
+    return []
+  }
+}
+
 export async function useFindOneTicket(id: string): Promise<Ticket | null> {
   try {
     const { $pb } = useNuxtApp()
@@ -191,34 +206,45 @@ export async function useUpdateTicketWhere(filter: string, data: TicketUpdate): 
   }
 }
 export async function useDeleteTicket(id: string): Promise<boolean> {
-    const toast = useToast()
-    try {
-      const { $pb } = useNuxtApp()
-      await $pb.collection<TicketResponse>('tickets').delete(id)
-
-      toast.add({
-        title: 'Ticket eliminado correctamente',
-        color: 'green',
-      })
-
-      return true
-    } catch (error) {
-      console.log(error)
-      toast.add({
-        title: 'Error al eliminar el ticket intenta de nuevo',
-        color: 'red',
-      })
-      return false
-    }
-  }
-
-  export async function subscribeTickets(callback: (ticket: Ticket, action: string) => void) {
+  const toast = useToast()
+  try {
     const { $pb } = useNuxtApp()
-    $pb.collection<TicketResponse>('tickets').subscribe('*', (e) => {
-      callback(ticketEntityMapper(e.record), e.action)
-    },
-      {
-        expand: expand,
-      }
-    )
+    await $pb.collection<TicketResponse>('tickets').delete(id)
+
+    toast.add({
+      title: 'Ticket eliminado correctamente',
+      color: 'green',
+    })
+
+    return true
+  } catch (error) {
+    console.log(error)
+    toast.add({
+      title: 'Error al eliminar el ticket intenta de nuevo',
+      color: 'red',
+    })
+    return false
   }
+}
+
+export async function subscribeTickets(callback: (ticket: Ticket, action: string) => void) {
+  const { $pb } = useNuxtApp()
+  $pb.collection<TicketResponse>('tickets').subscribe('*', (e) => {
+    callback(ticketEntityMapper(e.record), e.action)
+  },
+    {
+      expand: expand,
+    }
+  )
+}
+
+export async function useFindAllByZoneId({ zoneId = '', isClosed = false }): Promise<Ticket[]> {
+  const { $pb } = useNuxtApp()
+
+  const result = await $pb.collection<TicketResponse>('tickets').getFullList({
+    filter: `agent.zone.id="${zoneId}" && isClosed=${isClosed}`,
+    expand
+  })
+
+  return result.map(ticketEntityMapper)
+}

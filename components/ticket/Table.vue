@@ -11,14 +11,18 @@ const props = defineProps({
   },
   filters: {
     type: Object as PropType<FindTickets>,
-    default: () => ({
-      limit: Number,
-      page: Number,
-      agent: String,
-      assignedTo: String,
-      zone: String,
-      status: String,
-    })
+    default: {
+      page: 1,
+      limit: 10,
+      id: '',
+      agent: '',
+      status: '',
+      assignedTo: '',
+      phone: '',
+      content: '',
+      isClosed: false,
+      zone: ''
+    }
   },
   selected: {
     type: Array as PropType<Ticket[]>,
@@ -30,7 +34,7 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(["update:filters", "update:page", "update:form", "refresh", "update:selected"])
+const emit = defineEmits(["update:filters", "update:page", "update:form", "refresh", "onSelected"])
 
 const filters = computed({
   get: () => props.filters,
@@ -277,7 +281,7 @@ const actions = [
 ]
 
 watch(selected, (value) => {
-  if (value.length === 0) emit('update:selected', selected.value)
+  emit('onSelected', value)
 })
 </script>
 
@@ -290,7 +294,7 @@ watch(selected, (value) => {
         <UButton icon="i-heroicons-check-16-solid" label="Aplicar" @click="applyAction" />
       </div>
       <div class="flex pb-4">
-        <USelectMenu class="w-full" v-model="selectedColumns" :options="columns" multiple placeholder="Columnas"
+        <USelectMenu class="w-full" v-model="selectedColumns"  :options="columns" multiple placeholder="Columnas"
           label="Selecciona">
           <template #label>
             <span class="truncate">{{ selectedColumns.length }}</span>
@@ -305,8 +309,8 @@ watch(selected, (value) => {
       <template #id-header>
         <UInput v-model="filters.id" placeholder="ID" class="w-20" />
       </template>
-      <template #agentCode-header>
-        <UInput v-model="filters.agent" placeholder="Código de agente" class="w-20" />
+      <template #agent-header>
+        <UInput v-model="filters.agent" placeholder="Código de agencia" class="w-20" />
       </template>
       <template #status.name-header>
         <UInput v-model="filters.status" placeholder="Estatus" class="w-20" />

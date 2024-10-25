@@ -25,9 +25,6 @@ const props = defineProps({
 })
 
 const columns = [{
-  key: 'id',
-  label: 'ID'
-}, {
   key: 'name',
   label: 'Nombre'
 }, {
@@ -65,7 +62,7 @@ const items = (row: Route) => [
     click: () => {
       modal.open(RoutesSaveModal, {
         form: {
-          name: row.name,
+          zone: row.zone?.id ?? '',
           assignedTo: row.assignedTo?.id ?? '',
           started: row.started.toString() ?? '',
           tickets: row.tickets
@@ -82,6 +79,12 @@ const items = (row: Route) => [
     icon: 'i-heroicons-eye-20-solid',
     click: () => {
       navigateTo(`/rutas/${row.id}`)
+    }
+  }, {
+    label: 'Imprimir',
+    icon: 'i-heroicons-printer-20-solid',
+    click: () => {
+      navigateTo(`/rutas/${row.id}/imprimir`)
     }
   }], [{
     label: 'Terminar',
@@ -100,9 +103,6 @@ const items = (row: Route) => [
       <template #id-header>
         <UInput v-model="filters.id" placeholder="ID" class="w-36" />
       </template>
-      <template #name-header>
-        <UInput v-model="filters.name" placeholder="Nombre" />
-      </template>
       <template #assignedTo.name-header>
         <UInput v-model="filters.assignedTo" placeholder="Asignado a" />
       </template>
@@ -115,7 +115,7 @@ const items = (row: Route) => [
         {{ dateFormattedWithTime(row.created) }}
       </template>
       <template #started-data="{ row }">
-        {{ row.started ? dateFormatted(row.started): 'No iniciado' }}
+        {{ row.started ? dateFormatted(row.started) : 'No iniciado' }}
       </template>
       <template #closed-data="{ row }">
         {{ row.closed ? dateFormatted(row.closed) : 'No finalizado' }}

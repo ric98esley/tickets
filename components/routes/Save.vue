@@ -30,9 +30,9 @@ const props = defineProps({
 // })
 
 const form = ref<RouteCreate>({
-  zone: props.form.zone,
-  assignedTo: props.form.assignedTo,
-  started: props.form.started,
+  zone: props.form.zone ?? '',
+  assignedTo: props.form.assignedTo ?? '',
+  started: props.form.started ,
   tickets: []
 })
 
@@ -41,7 +41,6 @@ const emit = defineEmits({
 })
 
 const onSubmit = (event: FormSubmitEvent<RouteCreate>) => {
-  console.log('submit', event.data)
   emit('submit', event.data)
 }
 </script>
