@@ -1,38 +1,32 @@
 <script setup lang="ts">
-import Joi from 'joi'
 import type { FormSubmitEvent } from '#ui/types'
 import type { Route, RouteCreate } from '~/types';
 
 const props = defineProps({
   form: {
     type: Object as PropType<RouteCreate>,
-    default: () => ({ name: '', assignedTo: '', started: '', zone: ''})
+    default: () => ({ name: '', assignedTo: '', started: '', zone: '' })
   }
 })
 
-// const schema = Joi.object({
-//   zone: Joi.string().required().messages({
-//     'string.base': 'La zona debe ser un texto',
-//     'string.empty': 'La zona no puede estar vacía',
-//     'any.required': 'La zona es requerida'
-//   }),
-//   assignedTo: Joi.string().required()
-//     .messages({
-//       'string.base': 'El asignado debe ser un texto',
-//       'string.empty': 'El asignado no puede estar vacío',
-//       'any.required': 'El asignado es requerido'
-//     }),
-//   started: Joi.date().required()
-//     .messages({
-//       'date.base': 'La fecha de inicio debe ser una fecha',
-//       'any.required': 'La fecha de inicio es requerida'
-//     }),
-// })
+const validate = (data: RouteCreate) => {
+  const errors = []
+  if (!data.assignedTo) {
+    errors.push({ path: 'assignedTo', message: 'El nombre del conductor es requerido' })
+  }
+  if (!data.started) {
+    errors.push({ path: 'started', message: 'La fecha de inicio es requerida' })
+  }
+  if (!data.zone) {
+    errors.push({ path: 'zone', message: 'La zona es requerida' })
+  }
+  return errors
+}
 
 const form = ref<RouteCreate>({
   zone: props.form.zone ?? '',
   assignedTo: props.form.assignedTo ?? '',
-  started: props.form.started ,
+  started: props.form.started,
   tickets: []
 })
 
@@ -41,12 +35,13 @@ const emit = defineEmits({
 })
 
 const onSubmit = (event: FormSubmitEvent<RouteCreate>) => {
+  if (validate(event.data).length) return;
   emit('submit', event.data)
 }
 </script>
 
 <template>
-  <UForm :state="form" class="space-y-4"  @submit="onSubmit">
+  <UForm :state="form" class="space-y-4" :validate="validate" @submit="onSubmit">
     <UFormGroup label="Asignar a" name="assignedTo">
       <UserSelect v-model="form.assignedTo" />
     </UFormGroup>
@@ -55,7 +50,8 @@ const onSubmit = (event: FormSubmitEvent<RouteCreate>) => {
     </UFormGroup>
     <UFormGroup label="Fecha inicio" name="started">
       <UPopover :popper="{ placement: 'bottom-start' }">
-        <UButton icon="i-heroicons-calendar-days-20-solid" color="gray" :label="dateFormatted(form?.started)" variant="ghost" />
+        <UButton icon="i-heroicons-calendar-days-20-solid" color="gray" :label="dateFormatted(form?.started)"
+          variant="ghost" />
         <template #panel="{ close }">
           <DatePicker v-model="form.started" is-required @close="close" />
         </template>

@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type { RouteCreate, Ticket } from '~/types';
 
-
 const task = ref(0)
+
+const router = useRouter()
 
 const steps = [
   'Datos de la ruta',
@@ -34,8 +35,6 @@ const next = () => {
 
 const handlerFormSubmit = async (data: RouteCreate) => {
   if (!data.zone) return;
-  console.log(data)
-
 
   form.value = data
   await getTickets()
@@ -48,8 +47,6 @@ const handlerTableSubmit = () => {
 }
 
 const handlerTableSelected = (data: Ticket[]) => {
-  console.log('handlerTableSelected')
-  console.log(data)
   form.value.tickets = data
 }
 
@@ -59,6 +56,7 @@ const handlerSubmit = async () => {
   for (const ticket of form.value.tickets) {
     await useUpdateTicket(ticket.id, { route: response.id, assignedTo: response.assignedTo?.id })
   }
+  router.push(`/rutas/${response.id}/imprimir`)
 }
 
 </script>

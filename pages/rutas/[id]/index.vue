@@ -24,9 +24,8 @@ const tickets = reactive<{ total: number, rows: Ticket[] }>({
 const filters = reactive<FindTickets>({
   limit: route.query.limit ? Number(route.query.limit) : 10,
   page: route.query.page ? Number(route.query.page) : 1,
-  agentCode: route.query.agentCode as string || undefined,
+  agent: route.query.agent as string || undefined,
   assignedTo: route.query.assignedTo as string || undefined,
-  customerName: route.query.customerName as string || undefined,
   status: route.query.status as string || undefined,
   closedAtStart: route.query.closedAtStart as string || undefined,
   closedAtEnd: route.query.closedAtEnd as string || undefined,
@@ -64,7 +63,7 @@ const getRoute = async () => {
   if (!res) return
 
   routeEdit.value = {
-    name: res?.name ?? '',
+    zone: res.zone?.id ?? '',
     assignedTo: res.assignedTo?.id ?? '',
     started: res.started.toString().split(' ')[0] ?? '',
     tickets: res.tickets
