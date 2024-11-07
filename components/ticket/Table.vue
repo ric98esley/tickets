@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { TicketAssignTo, TicketChangeStatus, TicketDelete, TicketEdit, TicketModal, TicketModalResolve, TicketTransfer } from "#components";
+import { TicketAssignTo, TicketChangeStatus, TicketDelete, TicketEdit, TicketModalResolve, TicketTransfer } from "#components";
 import type { Department, FindTickets, Ticket, TicketResolve } from "~/types";
+import { dateFormattedWithTime } from '~/utils/date-format';
 
 const modal = useModal()
 
@@ -180,7 +181,7 @@ const items = (row: Ticket) => [
     click: () => {
       const ticket = {
         phone: row.phone,
-        agent: row.agent?.code ?? '',
+        agent: row.agent?.id ?? '',
         conversationId: row.conversationId,
         senderId: row.senderId,
         content: row.content,

@@ -1,6 +1,4 @@
 self.addEventListener('push', (event) => {
-  console.log('Push received: ', event.data.json());
-
   const data = event.data.json();
   const title = data.title;
   const options = {
@@ -12,16 +10,15 @@ self.addEventListener('push', (event) => {
 });
 
 self.addEventListener('notificationclick', (event) => {
-  console.log('Notification clicked: ', event);
   event.notification.close();
   event.waitUntil(
-    clients.openWindow('http://localhost:3000' + event.notification.data.url)
+    clients.openWindow('https://soportes.gana-loterias.online' + event.notification.data.url)
   );
 });
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close(); // CLosing the notification when clicked
-  const urlToOpen = 'http://localhost:3000' + event?.notification?.data?.url || 'http://localhost:3000/';
+  const urlToOpen = 'https://soportes.gana-loterias.online' + event?.notification?.data?.url || 'https://soportes.gana-loterias.online';
   // Open the URL in the default browser.
   event.waitUntil(
     clients
@@ -44,5 +41,4 @@ self.addEventListener('notificationclick', (event) => {
 });
 
 self.addEventListener('message', (event) => {
-  console.log('Message received: ', event);
 });

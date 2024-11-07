@@ -14,7 +14,9 @@ export default defineNuxtConfig({
   ssr: false,
   devtools: { enabled: true },
   modules: ['@nuxt/ui', '@pinia/nuxt', "nuxt-tiptap-editor"],
-
+  runtimeConfig: {
+    pbUrl: process.env.POCKETBASE_URL,
+  },
   pinia: {
     storesDirs: ['./stores/**'],
   },

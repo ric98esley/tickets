@@ -44,7 +44,9 @@ export const useCreateRoute = async (data: RouteCreate): Promise<Route | null> =
 
     const route = await $pb.collection<RouteResponse>('routes')
       .create({
-        ...data,
+        zone: data.zone,
+        started: data.started,
+        assignedTo: data.assignedTo,
         createdBy: userStore.user?.id
       }, {
         expand

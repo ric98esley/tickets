@@ -10,7 +10,7 @@ function requestPermission() {
   if (!window.Notification) return
 
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('service-worker.js');
+    navigator.serviceWorker.register('service-worker-07112024.js');
     if (window.Notification.permission === 'granted') {
       setToken()
     } else {

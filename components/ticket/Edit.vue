@@ -88,7 +88,7 @@ const handlerSubmit = async (event: FormSubmitEvent<TicketCreate>) => {
           <UInput v-model="state.phone" label="Teléfono" />
         </UFormGroup>
         <UFormGroup label="Código de agencia" name="agentCode">
-          <UInput v-model="state.agent" label="Código de agencia" />
+          <AgentsSelect v-model="state.agent" />
         </UFormGroup>
         <div class="columns-2">
           <div>

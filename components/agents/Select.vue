@@ -38,7 +38,9 @@ onMounted(async () => {
   await getAgents('');
 
   if (props.modelValue) {
+    loading.value = true;
     agent.value = await useFindOneAgent(props.modelValue);
+    loading.value = false;
   }
 });
 </script>

@@ -12,16 +12,14 @@ const props = defineProps({
 const emit = defineEmits(['submit'])
 
 const ticketToEdit = ref<TicketCreate>({
-  id: props.data.id,
-  customerName: props.data.customerName,
   phone: props.data.phone,
   department: props.data.department?.id ?? '',
   assignedTo: props.data.assignedTo?.id ?? '',
   status: props.data.status?.id ?? '',
-  agentCode: props.data.agentCode,
   conversationId: props.data.conversationId,
   senderId: props.data.senderId,
-  content: '',
+  content: props.data.content,
+  agent: props.data.agent ? props.data.agent.id : '',
 })
 
 const modal = useModal()

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Ticket } from '~/types';
+import { dateFormattedWithTime } from '~/utils/date-format';
 
 const props = defineProps({
   modelValue: {
@@ -21,7 +22,7 @@ const loading = ref(false)
 
 const searchTickets = async (query: string) => {
   loading.value = true
-  const tickets = await useFindTickets({ agentCode: query, limit: 200, isClosed: false })
+  const tickets = await useFindTickets({ agent: query, limit: 200, isClosed: false })
 
   loading.value = false
   return tickets.rows.filter(props.filterBy)

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Route, Ticket } from '~/types';
+import { dateFormattedWithTime } from '~/utils/date-format';
 
 definePageMeta({
   layout: 'print'
@@ -70,8 +71,23 @@ onMounted(async () => {
           </td>
           <td>{{ ticket.agent?.address }}</td>
         </tr>
+        <tr >
+          <td colspan="4">
+            <b>Total de soportes: {{ serviceRoute.tickets.length }}</b>
+          </td>
+        </tr>
       </tbody>
     </table>
+    <!-- genera un campo para firma y la persona que tiene asignada la ruta -->
+    <div class="flex justify-around mt-8 gap-4">
+      <div class="border border-black-500 w-1/2 h-24">
+        <h2 class="m-2">Firma del supervisor</h2>
+      </div>
+      <div class="border border-black-500 w-1/2 h-24">
+        <h2 class="m-2">Firma del técnico</h2>
+      </div>
+    </div>
+
 
   </div>
 </template>

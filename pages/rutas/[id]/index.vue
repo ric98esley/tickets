@@ -1,15 +1,10 @@
 <script setup lang="ts">
 import type { FindTickets, Route, RouteCreate, Ticket } from '~/types';
+import { dateFormattedWithTime, dateFormatted } from '~/utils/date-format';
+
+
 const route = useRoute()
 const router = useRouter()
-
-const items = [{
-  slot: 'ruta',
-  label: 'Ruta',
-}, {
-  slot: 'tickets',
-  label: 'Tickets',
-}]
 
 const modals = reactive({
   dates: false,

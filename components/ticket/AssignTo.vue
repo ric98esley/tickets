@@ -15,31 +15,32 @@ const props = defineProps({
 
 const emit = defineEmits(['submit'])
 
-const assignedTo = ref<User>()
+const assignedTo = ref<User | null>()
 
 const state = reactive({
   assignedTo: props.assignedTo || '',
   department: '',
 })
 
-const handlerAssignedTo = async (value: User) => {
+const handlerAssignedTo = async (value: User | null | undefined) => {
   if (!props.ticket) return
   await useUpdateTicket(props.ticket, { assignedTo: state.assignedTo })
+  const message = `El usuario ${user.user?.username} ${value ? `ha asignado el ticket a ${value.name}` : 'ha desasignado el ticket'}`
   await useCreateThread({
     ticket: props.ticket,
-    content: `El usuario ${user.user?.username} ha asignado el ticket a ${value.name}`,
+    content: message,
   })
 }
 
-const handlerSelect = (value: User) => {
+const handlerSelect = (value: User | null) => {
+  console.log(value)
   assignedTo.value = value
-  state.department = value.departments?.[0].id || ''
+  state.department = value?.departments?.[0].id || ''
+
 }
 
 const handlerSubmit = async () => {
-  if (assignedTo.value) {
-    await handlerAssignedTo(assignedTo.value)
-  }
+  await handlerAssignedTo(assignedTo.value)
   emit('submit', assignedTo)
   modal.close()
 }
